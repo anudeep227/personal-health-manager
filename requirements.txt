@@ -1,0 +1,36 @@
+# Core Framework
+kivy>=2.1.0
+kivymd>=1.1.0
+
+# Database (sqlite3 is built-in)
+sqlalchemy>=1.4.0
+
+# Date and Time
+python-dateutil>=2.8.0
+pytz>=2023.1
+
+# Notifications
+plyer>=2.1.0
+schedule>=1.2.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.20.0
+
+# Image Processing
+Pillow>=9.0.0
+
+# LLM Integration (optional - install separately for AI features)
+# To enable AI features, run: pip install transformers torch openai
+# transformers>=4.30.0
+# torch>=2.0.0  
+# openai>=1.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.28.0
+
+# Development
+pytest>=7.0.0
+black>=23.0.0
+flake8>=6.0.0

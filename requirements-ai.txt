@@ -1,0 +1,6 @@
+# Optional AI/LLM dependencies
+# Install with: pip install -r requirements-ai.txt
+
+transformers>=4.30.0
+torch>=2.0.0
+openai>=1.0.0

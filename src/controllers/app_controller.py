@@ -1,0 +1,108 @@
+"""
+Main application controller
+"""
+
+from kivy.uix.screenmanager import ScreenManager
+from typing import Dict, Any
+
+from views.home_screen import HomeScreen
+from views.profile_screen import ProfileScreen
+from views.medications_screen import MedicationsScreen
+from views.reports_screen import ReportsScreen
+from views.appointments_screen import AppointmentsScreen
+from views.health_records_screen import HealthRecordsScreen
+from views.settings_screen import SettingsScreen
+
+
+class AppController:
+    """Main application controller managing screens and navigation"""
+    
+    def __init__(self, app):
+        self.app = app
+        self.current_user = None
+        self.screens = {}
+        
+    def setup_screens(self, screen_manager: ScreenManager):
+        """Setup all application screens"""
+        
+        # Initialize screens
+        self.screens = {
+            'home': HomeScreen(name='home', controller=self),
+            'profile': ProfileScreen(name='profile', controller=self),
+            'medications': MedicationsScreen(name='medications', controller=self),
+            'reports': ReportsScreen(name='reports', controller=self),
+            'appointments': AppointmentsScreen(name='appointments', controller=self),
+            'health_records': HealthRecordsScreen(name='health_records', controller=self),
+            'settings': SettingsScreen(name='settings', controller=self),
+        }
+        
+        # Add screens to manager
+        for screen in self.screens.values():
+            screen_manager.add_widget(screen)
+        
+        # Set initial screen
+        screen_manager.current = 'home'
+        
+        return screen_manager
+    
+    def navigate_to(self, screen_name: str):
+        """Navigate to a specific screen"""
+        if screen_name in self.screens:
+            self.app.root.current = screen_name
+            
+            # Refresh screen data if needed
+            screen = self.screens[screen_name]
+            if hasattr(screen, 'refresh_data'):
+                screen.refresh_data()
+        else:
+            print(f"Screen '{screen_name}' not found")
+    
+    def get_database_service(self):
+        """Get database service instance"""
+        return self.app.db_service
+    
+    def get_notification_service(self):
+        """Get notification service instance"""
+        return self.app.notification_service
+    
+    def get_config(self):
+        """Get configuration instance"""
+        return self.app.config
+    
+    def set_current_user(self, user):
+        """Set the current user"""
+        self.current_user = user
+    
+    def get_current_user(self):
+        """Get the current user"""
+        return self.current_user
+    
+    def show_message(self, title: str, message: str):
+        """Show a message dialog"""
+        # This would show a popup dialog
+        print(f"{title}: {message}")
+        
+        # Send notification
+        if self.app.notification_service:
+            self.app.notification_service.send_custom_notification(title, message)
+    
+    def handle_error(self, error: Exception, context: str = ""):
+        """Handle application errors"""
+        error_message = f"Error in {context}: {str(error)}" if context else str(error)
+        print(f"APPLICATION ERROR: {error_message}")
+        self.show_message("Error", "An error occurred. Please try again.")
+    
+    def on_app_pause(self):
+        """Handle app pause event"""
+        print("App paused")
+        # Save any pending changes
+        
+    def on_app_resume(self):
+        """Handle app resume event"""
+        print("App resumed")
+        # Refresh data if needed
+        current_screen = self.app.root.current
+        if current_screen in self.screens:
+            screen = self.screens[current_screen]
+            if hasattr(screen, 'refresh_data'):
+                screen.refresh_data()

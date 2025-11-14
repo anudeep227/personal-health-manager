@@ -1,0 +1,26 @@
+{
+  "app": {
+    "name": "Personal Health Manager",
+    "version": "1.0.0",
+    "description": "A comprehensive mobile health management application"
+  },
+  "database": {
+    "name": "health_data.db",
+    "backup_interval_hours": 24
+  },
+  "notifications": {
+    "default_reminder_minutes": [30, 60, 1440],
+    "sound_enabled": true,
+    "vibration_enabled": true
+  },
+  "security": {
+    "encryption_enabled": true,
+    "max_file_size_mb": 50,
+    "allowed_file_types": [".pdf", ".jpg", ".jpeg", ".png", ".doc", ".docx", ".txt"]
+  },
+  "ai": {
+    "enabled": false,
+    "model": "gpt-3.5-turbo",
+    "max_tokens": 500
+  }
+}
