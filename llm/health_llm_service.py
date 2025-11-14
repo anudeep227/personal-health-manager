@@ -188,6 +188,272 @@ class HealthLLMService:
             print(f"Error in symptom assessment: {e}")
             return {"error": str(e)}
     
+    def analyze_document_comprehensive(self, document_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Comprehensive document analysis with specialized handling for different document types
+        """
+        try:
+            text_content = document_data.get('text_content', '')
+            document_type = document_data.get('document_type', 'unknown')
+            metadata = document_data.get('metadata', {})
+            
+            if not text_content.strip():
+                return {"error": "No text content to analyze"}
+            
+            # Route to specialized analysis based on document type
+            if document_type == 'ecg':
+                return self.analyze_ecg_report(text_content, metadata)
+            elif document_type == 'blood_test':
+                return self.analyze_blood_test_results(text_content, metadata)
+            elif document_type == 'prescription':
+                return self.analyze_prescription(text_content, metadata)
+            elif document_type == 'radiology':
+                return self.analyze_radiology_report(text_content, metadata)
+            elif document_type == 'lab_report':
+                return self.analyze_lab_report(text_content, metadata)
+            else:
+                return self.analyze_general_medical_document(text_content, metadata)
+                
+        except Exception as e:
+            print(f"Error in comprehensive document analysis: {e}")
+            return {"error": str(e)}
+    
+    def analyze_ecg_report(self, text_content: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze ECG/EKG reports"""
+        try:
+            prompt = f"""
+            Analyze this ECG/EKG report and extract key cardiac information:
+            
+            {text_content}
+            
+            Please identify and explain:
+            1. Heart rate and rhythm
+            2. Any abnormalities detected
+            3. Clinical significance of findings
+            4. Recommendations for follow-up
+            5. Key measurements (intervals, axes, etc.)
+            
+            Provide a clear, structured analysis that a patient can understand.
+            Include appropriate medical disclaimers.
+            """
+            
+            if self.openai_client:
+                response = self._query_openai(prompt, max_tokens=1000)
+                return {
+                    "document_type": "ecg_analysis",
+                    "analysis": response,
+                    "extracted_data": self._extract_ecg_data(text_content),
+                    "recommendations": self._get_ecg_recommendations(response),
+                    "disclaimer": "This analysis is for informational purposes only. Consult a cardiologist for medical interpretation."
+                }
+            else:
+                return self._basic_ecg_analysis(text_content)
+                
+        except Exception as e:
+            return {"error": f"ECG analysis failed: {e}"}
+    
+    def analyze_blood_test_results(self, text_content: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze blood test results"""
+        try:
+            prompt = f"""
+            Analyze these blood test results and provide patient-friendly explanations:
+            
+            {text_content}
+            
+            Please provide:
+            1. Summary of all test values
+            2. Which values are within/outside normal ranges
+            3. Clinical significance of abnormal values
+            4. Lifestyle factors that might influence results
+            5. Recommendations for follow-up
+            
+            Use clear, non-technical language while remaining accurate.
+            """
+            
+            if self.openai_client:
+                response = self._query_openai(prompt, max_tokens=1200)
+                return {
+                    "document_type": "blood_test_analysis",
+                    "analysis": response,
+                    "extracted_values": self._extract_lab_values(text_content),
+                    "abnormal_flags": self._identify_abnormal_values(text_content),
+                    "trending_data": self._suggest_trending_parameters(text_content),
+                    "disclaimer": "Results should be discussed with your healthcare provider for proper medical interpretation."
+                }
+            else:
+                return self._basic_blood_test_analysis(text_content)
+                
+        except Exception as e:
+            return {"error": f"Blood test analysis failed: {e}"}
+    
+    def analyze_prescription(self, text_content: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze prescription documents"""
+        try:
+            prompt = f"""
+            Analyze this prescription and provide medication information:
+            
+            {text_content}
+            
+            Please extract and explain:
+            1. All medications prescribed (name, dosage, frequency)
+            2. Purpose of each medication
+            3. Important side effects to watch for
+            4. Drug interactions to be aware of
+            5. Instructions for taking medications
+            6. Duration of treatment
+            
+            Provide clear, actionable information for the patient.
+            """
+            
+            if self.openai_client:
+                response = self._query_openai(prompt, max_tokens=1000)
+                medications = self._extract_medications_from_text(text_content)
+                
+                return {
+                    "document_type": "prescription_analysis",
+                    "analysis": response,
+                    "medications": medications,
+                    "interaction_check": self.analyze_medication_interactions([med['name'] for med in medications]),
+                    "adherence_tips": self._get_medication_adherence_tips(medications),
+                    "disclaimer": "Follow your doctor's instructions. Contact your healthcare provider with any concerns."
+                }
+            else:
+                return self._basic_prescription_analysis(text_content)
+                
+        except Exception as e:
+            return {"error": f"Prescription analysis failed: {e}"}
+    
+    def analyze_radiology_report(self, text_content: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze radiology reports (X-ray, CT, MRI, etc.)"""
+        try:
+            prompt = f"""
+            Analyze this radiology report and provide patient-friendly explanations:
+            
+            {text_content}
+            
+            Please explain:
+            1. Type of imaging study performed
+            2. Key findings in simple terms
+            3. What normal vs abnormal findings mean
+            4. Clinical significance of any abnormalities
+            5. Recommended follow-up actions
+            
+            Translate medical terminology into understandable language.
+            """
+            
+            if self.openai_client:
+                response = self._query_openai(prompt, max_tokens=1000)
+                return {
+                    "document_type": "radiology_analysis",
+                    "analysis": response,
+                    "imaging_type": self._identify_imaging_type(text_content),
+                    "key_findings": self._extract_radiology_findings(text_content),
+                    "follow_up_needed": self._assess_follow_up_urgency(text_content),
+                    "disclaimer": "Radiology results should be reviewed with your doctor for proper medical context."
+                }
+            else:
+                return self._basic_radiology_analysis(text_content)
+                
+        except Exception as e:
+            return {"error": f"Radiology analysis failed: {e}"}
+    
+    def analyze_lab_report(self, text_content: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze general laboratory reports"""
+        try:
+            prompt = f"""
+            Analyze this laboratory report and provide comprehensive insights:
+            
+            {text_content}
+            
+            Please provide:
+            1. Summary of all test results
+            2. Normal vs abnormal values with explanations
+            3. Potential health implications
+            4. Lifestyle recommendations based on results
+            5. Questions to ask your healthcare provider
+            
+            Make the information accessible and actionable for patients.
+            """
+            
+            if self.openai_client:
+                response = self._query_openai(prompt, max_tokens=1200)
+                return {
+                    "document_type": "lab_report_analysis",
+                    "analysis": response,
+                    "test_categories": self._categorize_lab_tests(text_content),
+                    "critical_values": self._identify_critical_values(text_content),
+                    "trend_recommendations": self._suggest_monitoring_schedule(text_content),
+                    "disclaimer": "Laboratory results require professional medical interpretation."
+                }
+            else:
+                return self._basic_lab_analysis(text_content)
+                
+        except Exception as e:
+            return {"error": f"Lab report analysis failed: {e}"}
+    
+    def analyze_general_medical_document(self, text_content: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze general medical documents"""
+        try:
+            prompt = f"""
+            Analyze this medical document and extract important information:
+            
+            {text_content}
+            
+            Please provide:
+            1. Document summary and purpose
+            2. Key medical information
+            3. Important dates and appointments
+            4. Action items or follow-up requirements
+            5. Questions to discuss with healthcare providers
+            
+            Organize the information in a patient-friendly format.
+            """
+            
+            if self.openai_client:
+                response = self._query_openai(prompt, max_tokens=1000)
+                return {
+                    "document_type": "general_medical_analysis",
+                    "analysis": response,
+                    "key_points": self._extract_key_points(text_content),
+                    "action_items": self._identify_action_items(text_content),
+                    "medical_terms": self._explain_medical_terms(text_content),
+                    "disclaimer": "This analysis is for informational purposes. Consult your healthcare provider for medical advice."
+                }
+            else:
+                return self._basic_document_summary(text_content)
+                
+        except Exception as e:
+            return {"error": f"Document analysis failed: {e}"}
+    
+    def generate_document_summary(self, document_data: Dict[str, Any]) -> str:
+        """Generate a concise summary of the document analysis"""
+        try:
+            analysis = self.analyze_document_comprehensive(document_data)
+            
+            if "error" in analysis:
+                return f"Analysis Error: {analysis['error']}"
+            
+            doc_type = analysis.get('document_type', 'unknown')
+            analysis_text = analysis.get('analysis', '')
+            
+            summary_prompt = f"""
+            Create a concise 2-3 sentence summary of this medical document analysis:
+            
+            Document Type: {doc_type}
+            Analysis: {analysis_text}
+            
+            Focus on the most important findings and recommendations.
+            """
+            
+            if self.openai_client:
+                summary = self._query_openai(summary_prompt, max_tokens=200)
+                return summary.strip()
+            else:
+                return f"Document processed: {doc_type}. {len(analysis_text)} characters of analysis generated."
+                
+        except Exception as e:
+            return f"Summary generation failed: {e}"
+    
     def _query_openai(self, prompt: str, max_tokens: int = 500) -> str:
         """Query OpenAI API"""
         try:
@@ -331,4 +597,178 @@ class HealthLLMService:
             "assessment": response,
             "disclaimer": "This is not medical advice. Always consult healthcare professionals.",
             "timestamp": datetime.utcnow().isoformat()
+        }
+    
+    # Helper methods for document analysis
+    def _extract_ecg_data(self, text: str) -> Dict[str, Any]:
+        """Extract ECG-specific data from text"""
+        import re
+        
+        data = {}
+        
+        # Extract heart rate
+        hr_match = re.search(r'heart rate[:\s]*(\d+)', text, re.IGNORECASE)
+        if hr_match:
+            data['heart_rate'] = int(hr_match.group(1))
+        
+        # Extract PR interval
+        pr_match = re.search(r'PR[:\s]*(\d+)', text, re.IGNORECASE)
+        if pr_match:
+            data['pr_interval'] = int(pr_match.group(1))
+        
+        # Extract QRS duration
+        qrs_match = re.search(r'QRS[:\s]*(\d+)', text, re.IGNORECASE)
+        if qrs_match:
+            data['qrs_duration'] = int(qrs_match.group(1))
+        
+        return data
+    
+    def _extract_lab_values(self, text: str) -> List[Dict[str, Any]]:
+        """Extract laboratory values from text"""
+        import re
+        
+        values = []
+        
+        # Common lab value patterns
+        patterns = [
+            r'(\w+)[:\s]*([\d.]+)\s*([a-zA-Z/]+)',  # Test: Value Unit
+            r'(\w+)[:\s]*([\d.]+)',  # Test: Value
+        ]
+        
+        for pattern in patterns:
+            matches = re.findall(pattern, text)
+            for match in matches:
+                if len(match) == 3:
+                    values.append({
+                        'test': match[0],
+                        'value': float(match[1]),
+                        'unit': match[2]
+                    })
+                elif len(match) == 2:
+                    values.append({
+                        'test': match[0],
+                        'value': float(match[1]),
+                        'unit': ''
+                    })
+        
+        return values
+    
+    def _extract_medications_from_text(self, text: str) -> List[Dict[str, Any]]:
+        """Extract medication information from prescription text"""
+        import re
+        
+        medications = []
+        
+        # Common medication patterns
+        med_patterns = [
+            r'(\w+)\s*(\d+(?:\.\d+)?)\s*(mg|g|ml|mcg)',  # Name Dose Unit
+            r'(\w+)\s*-\s*(\d+)\s*(mg|g|ml|mcg)',  # Name - Dose Unit
+        ]
+        
+        for pattern in med_patterns:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            for match in matches:
+                medications.append({
+                    'name': match[0],
+                    'dose': float(match[1]),
+                    'unit': match[2].lower()
+                })
+        
+        return medications
+    
+    def _identify_abnormal_values(self, text: str) -> List[str]:
+        """Identify values flagged as abnormal"""
+        abnormal_indicators = ['high', 'low', 'abnormal', 'elevated', 'decreased', '*', 'H', 'L']
+        abnormal_values = []
+        
+        lines = text.split('\n')
+        for line in lines:
+            if any(indicator in line.lower() for indicator in abnormal_indicators):
+                abnormal_values.append(line.strip())
+        
+        return abnormal_values
+    
+    def _extract_key_points(self, text: str) -> List[str]:
+        """Extract key points from medical document"""
+        # Simple extraction - look for sentences with medical keywords
+        medical_keywords = ['diagnosis', 'treatment', 'medication', 'follow-up', 'recommendation']
+        
+        sentences = text.split('.')
+        key_points = []
+        
+        for sentence in sentences:
+            if any(keyword in sentence.lower() for keyword in medical_keywords):
+                key_points.append(sentence.strip())
+        
+        return key_points[:5]  # Return top 5
+    
+    def _identify_action_items(self, text: str) -> List[str]:
+        """Identify action items from medical document"""
+        action_keywords = ['follow up', 'schedule', 'return', 'contact', 'monitor', 'continue', 'stop']
+        
+        sentences = text.split('.')
+        actions = []
+        
+        for sentence in sentences:
+            if any(keyword in sentence.lower() for keyword in action_keywords):
+                actions.append(sentence.strip())
+        
+        return actions
+    
+    def _explain_medical_terms(self, text: str) -> Dict[str, str]:
+        """Basic medical term explanations"""
+        # This would ideally use a medical dictionary API
+        common_terms = {
+            'hypertension': 'High blood pressure',
+            'diabetes': 'High blood sugar condition',
+            'hyperlipidemia': 'High cholesterol',
+            'tachycardia': 'Fast heart rate',
+            'bradycardia': 'Slow heart rate'
+        }
+        
+        found_terms = {}
+        text_lower = text.lower()
+        
+        for term, explanation in common_terms.items():
+            if term in text_lower:
+                found_terms[term] = explanation
+        
+        return found_terms
+    
+    # Fallback methods for when AI is not available
+    def _basic_ecg_analysis(self, text: str) -> Dict[str, Any]:
+        """Basic ECG analysis without AI"""
+        return {
+            "document_type": "ecg_analysis",
+            "analysis": "ECG document detected. Professional interpretation recommended.",
+            "extracted_data": self._extract_ecg_data(text),
+            "disclaimer": "Consult a cardiologist for proper ECG interpretation."
+        }
+    
+    def _basic_blood_test_analysis(self, text: str) -> Dict[str, Any]:
+        """Basic blood test analysis without AI"""
+        return {
+            "document_type": "blood_test_analysis",
+            "analysis": "Blood test results detected. Review with healthcare provider.",
+            "extracted_values": self._extract_lab_values(text),
+            "disclaimer": "Discuss results with your healthcare provider."
+        }
+    
+    def _basic_prescription_analysis(self, text: str) -> Dict[str, Any]:
+        """Basic prescription analysis without AI"""
+        medications = self._extract_medications_from_text(text)
+        return {
+            "document_type": "prescription_analysis",
+            "analysis": "Prescription document processed.",
+            "medications": medications,
+            "disclaimer": "Follow your doctor's instructions exactly."
+        }
+    
+    def _basic_document_summary(self, text: str) -> Dict[str, Any]:
+        """Basic document summary without AI"""
+        return {
+            "document_type": "general_medical_analysis",
+            "analysis": f"Medical document processed. {len(text)} characters extracted.",
+            "key_points": self._extract_key_points(text),
+            "disclaimer": "Consult healthcare providers for medical interpretation."
         }

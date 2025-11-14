@@ -20,6 +20,12 @@ numpy>=1.20.0
 # Image Processing
 Pillow>=9.0.0
 
+# Document Processing
+PyPDF2>=3.0.0
+python-docx>=0.8.11
+pytesseract>=0.3.10
+opencv-python>=4.8.0
+
 # LLM Integration (optional - install separately for AI features)
 # To enable AI features, run: pip install transformers torch openai
 # transformers>=4.30.0

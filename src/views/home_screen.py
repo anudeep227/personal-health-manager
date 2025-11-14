@@ -70,6 +70,12 @@ class HomeScreen(BaseScreen):
         )
         actions_layout.add_widget(add_report_btn)
         
+        analyze_doc_btn = MDRaisedButton(
+            text="Analyze Document",
+            on_release=lambda x: self.navigate_to_screen('document_analysis')
+        )
+        actions_layout.add_widget(analyze_doc_btn)
+        
         schedule_appt_btn = MDRaisedButton(
             text="Schedule Appointment",
             on_release=lambda x: self.navigate_to_screen('appointments')

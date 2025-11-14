@@ -36,6 +36,7 @@ class User(Base):
     medical_reports = relationship("MedicalReport", back_populates="user")
     appointments = relationship("Appointment", back_populates="user")
     health_records = relationship("HealthRecord", back_populates="user")
+    document_analyses = relationship("DocumentAnalysis", back_populates="user")
 
 
 class Medication(Base):
@@ -140,6 +141,136 @@ class HealthRecord(Base):
     
     # Relationships
     user = relationship("User", back_populates="health_records")
+
+
+class DocumentAnalysis(Base):
+    """Document analysis results and metadata"""
+    __tablename__ = 'document_analyses'
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    file_name = Column(String(200), nullable=False)
+    file_path = Column(String(500))
+    file_extension = Column(String(10))
+    file_size_bytes = Column(Integer)
+    document_type = Column(String(50))  # ecg, blood_test, prescription, radiology, etc.
+    confidence_score = Column(Float, default=0.0)
+    
+    # Processing metadata
+    processing_method = Column(String(50))  # tesseract, easyocr, pdfplumber, etc.
+    processing_duration = Column(Float)  # seconds
+    processed_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Content
+    text_content = Column(Text)
+    extracted_data = Column(Text)  # JSON string of structured data
+    
+    # AI Analysis
+    llm_analysis = Column(Text)  # Full AI analysis text
+    key_findings = Column(Text)  # JSON string of key findings
+    recommendations = Column(Text)  # JSON string of recommendations
+    medical_terms = Column(Text)  # JSON string of explained medical terms
+    
+    # Status and flags
+    analysis_status = Column(String(20), default='completed')  # processing, completed, failed
+    is_critical = Column(Boolean, default=False)
+    is_favorite = Column(Boolean, default=False)
+    
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    user = relationship("User", back_populates="document_analyses")
+
+
+class DocumentTag(Base):
+    """Tags for document categorization"""
+    __tablename__ = 'document_tags'
+    
+    id = Column(Integer, primary_key=True)
+    document_id = Column(Integer, ForeignKey('document_analyses.id'), nullable=False)
+    tag_name = Column(String(50), nullable=False)
+    tag_type = Column(String(20), default='user')  # user, system, ai
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    document = relationship("DocumentAnalysis")
+
+
+class ExtractedMedication(Base):
+    """Medications extracted from document analysis"""
+    __tablename__ = 'extracted_medications'
+    
+    id = Column(Integer, primary_key=True)
+    document_id = Column(Integer, ForeignKey('document_analyses.id'), nullable=False)
+    medication_name = Column(String(100), nullable=False)
+    dosage = Column(String(50))
+    frequency = Column(String(50))
+    duration = Column(String(50))
+    instructions = Column(Text)
+    extracted_confidence = Column(Float, default=0.0)
+    
+    # Status
+    is_verified = Column(Boolean, default=False)
+    is_added_to_profile = Column(Boolean, default=False)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    document = relationship("DocumentAnalysis")
+
+
+class ExtractedLabValue(Base):
+    """Lab values extracted from test results"""
+    __tablename__ = 'extracted_lab_values'
+    
+    id = Column(Integer, primary_key=True)
+    document_id = Column(Integer, ForeignKey('document_analyses.id'), nullable=False)
+    test_name = Column(String(100), nullable=False)
+    value = Column(String(50))
+    unit = Column(String(20))
+    reference_range = Column(String(100))
+    is_abnormal = Column(Boolean, default=False)
+    abnormal_flag = Column(String(10))  # H, L, *, etc.
+    extracted_confidence = Column(Float, default=0.0)
+    
+    # Clinical context
+    clinical_significance = Column(Text)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    document = relationship("DocumentAnalysis")
+
+
+class DocumentSummary(Base):
+    """AI-generated document summaries"""
+    __tablename__ = 'document_summaries'
+    
+    id = Column(Integer, primary_key=True)
+    document_id = Column(Integer, ForeignKey('document_analyses.id'), nullable=False, unique=True)
+    
+    # Summary content
+    short_summary = Column(Text)  # 2-3 sentences
+    detailed_summary = Column(Text)  # comprehensive summary
+    key_points = Column(Text)  # JSON array of key points
+    action_items = Column(Text)  # JSON array of action items
+    
+    # Analysis metadata
+    summary_type = Column(String(50))  # ai_generated, manual, hybrid
+    model_used = Column(String(50))  # gpt-3.5-turbo, local_model, etc.
+    generation_date = Column(DateTime, default=datetime.utcnow)
+    
+    # Quality metrics
+    readability_score = Column(Float)
+    accuracy_score = Column(Float)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    document = relationship("DocumentAnalysis", uselist=False)
 
 
 class Settings(Base):

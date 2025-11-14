@@ -11,6 +11,7 @@ from views.medications_screen import MedicationsScreen
 from views.reports_screen import ReportsScreen
 from views.appointments_screen import AppointmentsScreen
 from views.health_records_screen import HealthRecordsScreen
+from views.document_analysis_screen import DocumentAnalysisScreen
 from views.settings_screen import SettingsScreen
 
 
@@ -33,6 +34,7 @@ class AppController:
             'reports': ReportsScreen(name='reports', controller=self),
             'appointments': AppointmentsScreen(name='appointments', controller=self),
             'health_records': HealthRecordsScreen(name='health_records', controller=self),
+            'document_analysis': DocumentAnalysisScreen(name='document_analysis', controller=self),
             'settings': SettingsScreen(name='settings', controller=self),
         }
         
@@ -98,6 +100,66 @@ class AppController:
         # Save any pending changes
         
     def on_app_resume(self):
+        """Handle app resume event"""
+        print("App resumed")
+        # Refresh data if needed
+    
+    def get_document_service(self):
+        """Get document service instance"""
+        if not hasattr(self.app, 'document_service'):
+            from src.services.document_service import DocumentService
+            self.app.document_service = DocumentService()
+        return self.app.document_service
+    
+    def analyze_document(self, file_path: str, callback=None):
+        """Analyze a document and optionally call callback with results"""
+        try:
+            document_service = self.get_document_service()
+            user_id = self.current_user.id if self.current_user else 1
+            
+            # Perform analysis
+            result = document_service.analyze_document_complete(file_path, user_id)
+            
+            if callback:
+                callback(result)
+            
+            return result
+            
+        except Exception as e:
+            self.handle_error(e, "document analysis")
+            return {"error": str(e), "success": False}
+    
+    def get_user_documents(self, limit: int = 50):
+        """Get user's documents"""
+        try:
+            document_service = self.get_document_service()
+            user_id = self.current_user.id if self.current_user else 1
+            return document_service.get_user_documents(user_id, limit)
+        except Exception as e:
+            self.handle_error(e, "getting user documents")
+            return []
+    
+    def search_documents(self, query: str, document_type: str = None):
+        """Search user's documents"""
+        try:
+            document_service = self.get_document_service()
+            user_id = self.current_user.id if self.current_user else 1
+            return document_service.search_documents(user_id, query, document_type)
+        except Exception as e:
+            self.handle_error(e, "searching documents")
+            return []
+    
+    def get_document_details(self, document_id: int):
+        """Get detailed information about a document"""
+        try:
+            document_service = self.get_document_service()
+            user_id = self.current_user.id if self.current_user else 1
+            return document_service.get_document_details(document_id, user_id)
+        except Exception as e:
+            self.handle_error(e, "getting document details")
+            return None
+    
+
         """Handle app resume event"""
         print("App resumed")
         # Refresh data if needed
