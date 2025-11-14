@@ -11,8 +11,8 @@ from datetime import datetime, timedelta
 import json
 import os
 
-from models.database_models import Base, User, Medication, MedicationLog, MedicalReport, Appointment, HealthRecord, Settings
-from utils.config import Config
+from src.models.database_models import Base, User, Medication, MedicationLog, MedicalReport, Appointment, HealthRecord, Settings
+from src.utils.config import Config
 
 
 class DatabaseService:
@@ -46,7 +46,7 @@ class DatabaseService:
             raise
     
     @contextmanager
-    def get_session(self) -> Session:
+    def get_session(self):
         """Get database session with automatic cleanup"""
         session = self.SessionLocal()
         try:

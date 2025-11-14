@@ -11,11 +11,21 @@ import os
 import json
 from typing import List, Dict, Any, Optional
 from datetime import datetime
-import openai
-from transformers import pipeline
-import torch
 
-from utils.config import Config
+# Optional AI dependencies
+try:
+    import openai
+    import torch
+    from transformers import pipeline
+    AI_AVAILABLE = True
+except ImportError as e:
+    AI_AVAILABLE = False
+    # Create dummy classes for type hints
+    class openai:
+        class OpenAI:
+            def __init__(self, api_key): pass
+
+from src.utils.config import Config
 
 
 class HealthLLMService:
@@ -29,6 +39,10 @@ class HealthLLMService:
     
     def setup_models(self):
         """Initialize AI models"""
+        if not AI_AVAILABLE:
+            print("AI libraries not available. Document analysis will use basic text processing only.")
+            return
+            
         try:
             # Setup OpenAI (for production use)
             openai_key = os.getenv('OPENAI_API_KEY')
@@ -612,9 +626,9 @@ class HealthLLMService:
             data['heart_rate'] = int(hr_match.group(1))
         
         # Extract PR interval
-        pr_match = re.search(r'PR[:\s]*(\d+)', text, re.IGNORECASE)
+        pr_match = re.search(r'PR[:\s]*(interval[:\s]*)?(\d+)', text, re.IGNORECASE)
         if pr_match:
-            data['pr_interval'] = int(pr_match.group(1))
+            data['pr_interval'] = int(pr_match.group(2))
         
         # Extract QRS duration
         qrs_match = re.search(r'QRS[:\s]*(\d+)', text, re.IGNORECASE)

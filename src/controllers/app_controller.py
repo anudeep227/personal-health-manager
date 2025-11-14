@@ -5,14 +5,14 @@ Main application controller
 from kivy.uix.screenmanager import ScreenManager
 from typing import Dict, Any
 
-from views.home_screen import HomeScreen
-from views.profile_screen import ProfileScreen
-from views.medications_screen import MedicationsScreen
-from views.reports_screen import ReportsScreen
-from views.appointments_screen import AppointmentsScreen
-from views.health_records_screen import HealthRecordsScreen
-from views.document_analysis_screen import DocumentAnalysisScreen
-from views.settings_screen import SettingsScreen
+from src.views.home_screen import HomeScreen
+from src.views.profile_screen import ProfileScreen
+from src.views.medications_screen import MedicationsScreen
+from src.views.reports_screen import ReportsScreen
+from src.views.appointments_screen import AppointmentsScreen
+from src.views.health_records_screen import HealthRecordsScreen
+from src.views.document_analysis_screen import DocumentAnalysisScreen
+from src.views.settings_screen import SettingsScreen
 
 
 class AppController:

@@ -22,6 +22,9 @@ try:
     PDF_AVAILABLE = True
 except ImportError as e:
     PDF_AVAILABLE = False
+    # Create dummy numpy for type hints when not available
+    class np:
+        ndarray = object
     logging.warning(f"Some document processing libraries not available: {e}")
 
 # Advanced processing (optional)
@@ -103,13 +106,22 @@ class DocumentProcessingService:
         try:
             # Route to appropriate processor
             if file_extension in self.supported_formats['pdf']:
-                result.update(self.process_pdf(file_path))
+                if PDF_AVAILABLE:
+                    result.update(self.process_pdf(file_path))
+                else:
+                    result['error'] = "PDF processing libraries not available. Please install with: pip install PyPDF2"
             elif file_extension in self.supported_formats['word']:
-                result.update(self.process_word_document(file_path))
+                if PDF_AVAILABLE:
+                    result.update(self.process_word_document(file_path))
+                else:
+                    result['error'] = "Word processing libraries not available. Please install with: pip install python-docx"
             elif file_extension in self.supported_formats['text']:
                 result.update(self.process_text_file(file_path))
             elif file_extension in self.supported_formats['image']:
-                result.update(self.process_image(file_path))
+                if PDF_AVAILABLE:
+                    result.update(self.process_image(file_path))
+                else:
+                    result['error'] = "Image processing libraries not available. Please install with: pip install opencv-python pytesseract"
             else:
                 result['error'] = f"Unsupported file format: {file_extension}"
             
@@ -127,6 +139,9 @@ class DocumentProcessingService:
     def process_pdf(self, file_path: str) -> Dict[str, Any]:
         """Process PDF documents"""
         result = {'text_content': '', 'metadata': {}}
+        
+        if not PDF_AVAILABLE:
+            raise Exception("PDF processing libraries not available")
         
         try:
             # Try advanced PDF processing first
@@ -169,6 +184,9 @@ class DocumentProcessingService:
     def process_word_document(self, file_path: str) -> Dict[str, Any]:
         """Process Word documents"""
         result = {'text_content': '', 'metadata': {}}
+        
+        if not PDF_AVAILABLE:
+            raise Exception("Word processing libraries not available")
         
         try:
             if ADVANCED_PROCESSING and file_path.endswith('.docx'):
@@ -217,6 +235,9 @@ class DocumentProcessingService:
     def process_image(self, file_path: str) -> Dict[str, Any]:
         """Process images using OCR"""
         result = {'text_content': '', 'metadata': {}}
+        
+        if not PDF_AVAILABLE:
+            raise Exception("Image processing libraries not available")
         
         try:
             # Load and preprocess image
@@ -271,8 +292,11 @@ class DocumentProcessingService:
         
         return result
     
-    def preprocess_image_for_ocr(self, image: np.ndarray) -> np.ndarray:
+    def preprocess_image_for_ocr(self, image):
         """Preprocess image to improve OCR accuracy"""
+        if not PDF_AVAILABLE:
+            return image
+        
         # Convert to grayscale
         if len(image.shape) > 2:
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -291,8 +315,11 @@ class DocumentProcessingService:
         
         return binary
     
-    def is_medical_chart(self, image: np.ndarray) -> bool:
+    def is_medical_chart(self, image) -> bool:
         """Detect if image contains medical charts/graphs"""
+        if not PDF_AVAILABLE:
+            return False
+        
         # Simple heuristic: look for grid patterns and regular waves
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if len(image.shape) > 2 else image
         
@@ -302,7 +329,7 @@ class DocumentProcessingService:
         
         return lines is not None and len(lines) > 10
     
-    def extract_medical_chart_data(self, image: np.ndarray) -> Dict[str, Any]:
+    def extract_medical_chart_data(self, image) -> Dict[str, Any]:
         """Extract data from medical charts/ECG"""
         # Placeholder for advanced medical chart analysis
         # This would require specialized medical image processing
