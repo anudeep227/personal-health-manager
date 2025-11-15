@@ -3,9 +3,9 @@ Beautiful Health App Color Scheme and Material Design Theme
 """
 
 class HealthAppColors:
-    """Beautiful color palette for the health management app"""
+    """Enhanced graphical color palette for the health management app"""
     
-    # Primary Health Colors (Teal-based medical theme)
+    # Primary Health Colors (Enhanced Teal-based medical theme)
     PRIMARY = {
         50: (0.94, 0.98, 0.97, 1),   # Very light teal
         100: (0.8, 0.94, 0.92, 1),   # Light teal
@@ -19,7 +19,7 @@ class HealthAppColors:
         900: (0.0, 0.3, 0.26, 1),    # Darkest teal
     }
     
-    # Accent Colors (Light Blue for complementary actions)
+    # Enhanced Accent Colors with Gradients
     ACCENT = {
         'A100': (0.5, 0.9, 1.0, 1),    # Very light blue
         'A200': (0.25, 0.85, 1.0, 1),  # Light blue
@@ -27,17 +27,35 @@ class HealthAppColors:
         'A700': (0.0, 0.55, 0.95, 1),  # Dark blue
     }
     
-    # Semantic Colors for Health App
-    SUCCESS = (0.2, 0.8, 0.2, 1)        # Green for success/healthy
-    WARNING = (1.0, 0.7, 0.0, 1)        # Orange for warnings
-    ERROR = (0.95, 0.2, 0.2, 1)         # Red for errors/critical
-    INFO = (0.1, 0.6, 0.9, 1)           # Blue for information
+    # Enhanced Semantic Colors with Visual Appeal
+    SUCCESS = (0.15, 0.85, 0.35, 1)     # Vibrant green for success/healthy
+    WARNING = (1.0, 0.65, 0.0, 1)       # Bright orange for warnings
+    ERROR = (0.95, 0.26, 0.21, 1)       # Material red for errors/critical
+    INFO = (0.13, 0.59, 0.95, 1)        # Material blue for information
     
-    # Medication Colors
-    MEDICATION = (0.6, 0.3, 0.9, 1)     # Purple for medications
-    APPOINTMENT = (0.2, 0.7, 0.9, 1)    # Light blue for appointments
-    REPORT = (0.9, 0.5, 0.2, 1)         # Orange for reports
-    VITAL_SIGNS = (0.8, 0.2, 0.4, 1)    # Pink/red for vital signs
+    # New Graphical Colors for Visual Enhancement
+    GRADIENT_START = (0.0, 0.65, 0.58, 1)    # Primary teal
+    GRADIENT_END = (0.13, 0.59, 0.95, 1)     # Info blue
+    
+    # Activity Status Colors (More Vibrant)
+    COMPLETED = (0.15, 0.85, 0.35, 1)        # Bright green
+    PENDING = (1.0, 0.65, 0.0, 1)            # Bright orange
+    OVERDUE = (0.95, 0.26, 0.21, 1)          # Material red
+    SCHEDULED = (0.40, 0.23, 0.72, 1)        # Deep purple
+    
+    # Enhanced Category Colors with Visual Pop
+    MEDICATION = (0.67, 0.35, 0.95, 1)  # Vivid purple for medications
+    APPOINTMENT = (0.25, 0.75, 0.95, 1) # Sky blue for appointments  
+    REPORT = (0.95, 0.55, 0.25, 1)      # Warm orange for reports
+    VITAL_SIGNS = (0.91, 0.30, 0.24, 1) # Coral red for vital signs
+    REMINDER = (1.0, 0.84, 0.0, 1)      # Golden yellow for reminders
+    ACHIEVEMENT = (0.0, 0.80, 0.40, 1)  # Emerald green for achievements
+    
+    # Card Background Colors with Subtle Gradients
+    CARD_GRADIENT_1 = (0.98, 0.98, 1.0, 1)      # Light blue tint
+    CARD_GRADIENT_2 = (1.0, 0.98, 0.98, 1)      # Light pink tint  
+    CARD_GRADIENT_3 = (0.98, 1.0, 0.98, 1)      # Light green tint
+    CARD_GRADIENT_4 = (1.0, 1.0, 0.98, 1)       # Light yellow tint
     
     # Background Colors
     BACKGROUND_LIGHT = (0.98, 0.98, 0.98, 1)  # Almost white

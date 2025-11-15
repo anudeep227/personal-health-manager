@@ -291,14 +291,16 @@ class HomeScreen(BaseScreen):
         return card
     
     def create_quick_actions_card(self) -> MDCard:
-        """Create quick actions card with Material Design buttons"""
+        """Create quick actions card with enhanced Material Design buttons"""
+        from src.utils.theme import HealthAppColors
         app = MDApp.get_running_app()
         
         card = MDCard(
             size_hint_y=None,
             height="200dp",
             elevation=4,
-            padding="20dp"
+            padding="20dp",
+            md_bg_color=HealthAppColors.CARD_GRADIENT_4
         )
         
         layout = MDBoxLayout(orientation='vertical', spacing="16dp")
@@ -316,12 +318,12 @@ class HomeScreen(BaseScreen):
         # Actions grid
         actions_grid = GridLayout(cols=2, spacing="12dp", size_hint_y=None, height="140dp")
         
-        # Action buttons with icons and colors
+        # Enhanced action buttons with vibrant colors
         actions = [
-            {"text": "Add Medication", "color": app.theme_cls.accent_color, "screen": "medications"},
-            {"text": "Book Appointment", "color": (0.3, 0.7, 0.9, 1), "screen": "appointments"},
-            {"text": "Upload Report", "color": (0.9, 0.5, 0.3, 1), "screen": "reports"},
-            {"text": "Track Vitals", "color": (0.8, 0.3, 0.5, 1), "screen": "health_records"}
+            {"text": "Add Medication", "color": HealthAppColors.MEDICATION, "screen": "medications"},
+            {"text": "Book Appointment", "color": HealthAppColors.APPOINTMENT, "screen": "appointments"},
+            {"text": "Upload Report", "color": HealthAppColors.REPORT, "screen": "reports"},
+            {"text": "Track Vitals", "color": HealthAppColors.VITAL_SIGNS, "screen": "health_records"}
         ]
         
         for action in actions:
@@ -344,36 +346,54 @@ class HomeScreen(BaseScreen):
         return card
     
     def create_health_overview_section(self) -> MDCard:
-        """Create health overview with statistics"""
+        """Create enhanced health overview with vibrant statistics"""
+        from src.utils.theme import HealthAppColors
         app = MDApp.get_running_app()
         
         card = MDCard(
             size_hint_y=None,
-            height="180dp",
-            elevation=4,
-            padding="20dp"
+            height="200dp",  # Increased height for better spacing
+            elevation=6,
+            padding="20dp",
+            md_bg_color=HealthAppColors.CARD_GRADIENT_3
         )
         
         layout = MDBoxLayout(orientation='vertical', spacing="16dp")
         
-        # Title
+        # Enhanced title with icon
         title = MDLabel(
-            text="Health Overview",
+            text="🏥 Health Overview",
             font_style="H6",
             theme_text_color="Primary",
             size_hint_y=None,
-            height="30dp"
+            height="30dp",
+            bold=True
         )
         layout.add_widget(title)
         
-        # Stats grid
-        stats_grid = GridLayout(cols=3, spacing="12dp", size_hint_y=None, height="120dp")
+        # Stats grid with better spacing
+        stats_grid = GridLayout(cols=3, spacing="16dp", size_hint_y=None, height="140dp")
         
-        # Health statistics
+        # Enhanced health statistics with colors
         stats = [
-            {"icon": "💊", "number": "3", "label": "Medications\nToday"},
-            {"icon": "📅", "number": "1", "label": "Upcoming\nAppt"},
-            {"icon": "📊", "number": "12", "label": "Health\nRecords"}
+            {
+                "icon": "💊", 
+                "number": "3", 
+                "label": "Medications\nToday",
+                "color": HealthAppColors.MEDICATION
+            },
+            {
+                "icon": "📅", 
+                "number": "1", 
+                "label": "Upcoming\nAppt",
+                "color": HealthAppColors.APPOINTMENT
+            },
+            {
+                "icon": "📊", 
+                "number": "12", 
+                "label": "Health\nRecords",
+                "color": HealthAppColors.VITAL_SIGNS
+            }
         ]
         
         for stat in stats:
@@ -396,7 +416,8 @@ class HomeScreen(BaseScreen):
             number_label = MDLabel(
                 text=stat["number"],
                 font_style="H4",
-                theme_text_color="Primary",
+                theme_text_color="Custom",
+                text_color=stat["color"],  # Use the enhanced colors
                 halign="center",
                 size_hint_y=None,
                 height="40dp",
@@ -427,45 +448,153 @@ class HomeScreen(BaseScreen):
         return card
     
     def create_recent_activity_card(self) -> MDCard:
-        """Create recent activity card with timeline"""
+        """Create enhanced recent activity card with proper text wrapping and colors"""
+        from src.utils.theme import HealthAppColors
+        
         card = MDCard(
             size_hint_y=None,
-            height="250dp",
+            height="300dp",  # Increased height to prevent overflow
             elevation=4,
-            padding="20dp"
+            padding="16dp",
+            md_bg_color=HealthAppColors.CARD_GRADIENT_1
         )
         
         layout = MDBoxLayout(orientation='vertical', spacing="12dp")
         
-        # Title
+        # Title with enhanced styling
         title = MDLabel(
-            text="Recent Activity",
+            text="📊 Recent Activity",
             font_style="H6",
             theme_text_color="Primary",
             size_hint_y=None,
-            height="30dp"
+            height="30dp",
+            bold=True
         )
         layout.add_widget(title)
         
-        # Activity list
-        activity_scroll = ScrollView(size_hint_y=None, height="200dp")
-        activity_list = MDList()
+        # Activity list with proper scrolling
+        activity_scroll = ScrollView(size_hint_y=None, height="240dp")
+        activity_container = MDBoxLayout(
+            orientation='vertical',
+            spacing="8dp",
+            adaptive_height=True,
+            padding="4dp"
+        )
         
-        # Sample activities
+        # Enhanced sample activities with colors and icons
         activities = [
-            {"primary": "Took Aspirin", "secondary": "2 hours ago"},
-            {"primary": "Added Blood Test Report", "secondary": "Yesterday"},
-            {"primary": "Completed Cardiology Appointment", "secondary": "3 days ago"},
+            {
+                "icon": "💊",
+                "primary": "Took Aspirin 100mg",
+                "secondary": "2 hours ago",
+                "status": "completed",
+                "color": HealthAppColors.COMPLETED
+            },
+            {
+                "icon": "📄",
+                "primary": "Added Blood Test Report",
+                "secondary": "Yesterday",
+                "status": "completed", 
+                "color": HealthAppColors.REPORT
+            },
+            {
+                "icon": "🏥",
+                "primary": "Cardiology Appointment",
+                "secondary": "3 days ago",
+                "status": "completed",
+                "color": HealthAppColors.APPOINTMENT
+            },
+            {
+                "icon": "📋",
+                "primary": "Updated Health Records",
+                "secondary": "5 days ago", 
+                "status": "completed",
+                "color": HealthAppColors.VITAL_SIGNS
+            },
+            {
+                "icon": "🔔",
+                "primary": "Set Medication Reminder",
+                "secondary": "1 week ago",
+                "status": "completed",
+                "color": HealthAppColors.REMINDER
+            }
         ]
         
         for activity in activities:
-            item = TwoLineListItem(
-                text=activity["primary"],
-                secondary_text=activity["secondary"]
+            # Create activity item card
+            item_card = MDCard(
+                size_hint_y=None,
+                height="60dp",
+                elevation=2,
+                padding="12dp",
+                md_bg_color=(1.0, 1.0, 1.0, 1)
             )
-            activity_list.add_widget(item)
+            
+            item_layout = MDBoxLayout(
+                orientation='horizontal',
+                spacing="12dp",
+                size_hint_y=None,
+                height="36dp"
+            )
+            
+            # Status icon with color
+            icon_label = MDLabel(
+                text=activity["icon"],
+                font_size="20sp",
+                size_hint_x=None,
+                width="30dp",
+                halign="center",
+                valign="center"
+            )
+            
+            # Activity text content
+            text_layout = MDBoxLayout(orientation='vertical', spacing="2dp")
+            
+            primary_label = MDLabel(
+                text=activity["primary"],
+                font_style="Subtitle2",
+                theme_text_color="Primary",
+                size_hint_y=None,
+                height="18dp",
+                text_size=(None, None),  # Allow text to size naturally
+                halign="left",
+                valign="center"
+            )
+            
+            secondary_label = MDLabel(
+                text=activity["secondary"],
+                font_style="Caption",
+                theme_text_color="Secondary",
+                size_hint_y=None,
+                height="14dp",
+                text_size=(None, None),  # Allow text to size naturally
+                halign="left",
+                valign="center"
+            )
+            
+            text_layout.add_widget(primary_label)
+            text_layout.add_widget(secondary_label)
+            
+            # Status indicator
+            status_indicator = MDLabel(
+                text="✓",
+                theme_text_color="Custom",
+                text_color=activity["color"],
+                font_size="16sp",
+                size_hint_x=None,
+                width="20dp",
+                halign="center",
+                valign="center",
+                bold=True
+            )
+            
+            item_layout.add_widget(icon_label)
+            item_layout.add_widget(text_layout)
+            item_layout.add_widget(status_indicator)
+            item_card.add_widget(item_layout)
+            activity_container.add_widget(item_card)
         
-        activity_scroll.add_widget(activity_list)
+        activity_scroll.add_widget(activity_container)
         layout.add_widget(activity_scroll)
         card.add_widget(layout)
         

@@ -70,60 +70,105 @@ class MedicationsScreen(BaseScreen):
         self.refresh_data()
     
     def create_medication_stats_card(self) -> MDCard:
-        """Create medication statistics card"""
+        """Create enhanced medication statistics card with vibrant colors"""
         app = MDApp.get_running_app()
         
         card = MDCard(
             size_hint_y=None,
-            height="120dp",
-            elevation=4,
-            padding="20dp"
+            height="130dp",  # Slightly increased for better spacing
+            elevation=6,
+            padding="20dp",
+            md_bg_color=HealthAppColors.CARD_GRADIENT_2
         )
         
-        layout = MDBoxLayout(orientation='horizontal', spacing="20dp")
+        layout = MDBoxLayout(orientation='horizontal', spacing="16dp")
         
-        # Stats
+        # Enhanced stats with more vibrant colors
         stats = [
-            {"number": "5", "label": "Active\nMedications", "color": HealthAppColors.MEDICATION},
-            {"number": "3", "label": "Due\nToday", "color": HealthAppColors.WARNING},
-            {"number": "2", "label": "Missed\nDoses", "color": HealthAppColors.ERROR}
+            {
+                "number": "5", 
+                "label": "Active\nMedications", 
+                "color": HealthAppColors.MEDICATION,
+                "icon": "💊"
+            },
+            {
+                "number": "3", 
+                "label": "Due\nToday", 
+                "color": HealthAppColors.WARNING,
+                "icon": "⏰"
+            },
+            {
+                "number": "2", 
+                "label": "Missed\nDoses", 
+                "color": HealthAppColors.ERROR,
+                "icon": "⚠️"
+            }
         ]
         
         for stat in stats:
-            stat_layout = MDBoxLayout(orientation='vertical', spacing="8dp")
+            # Enhanced stat container with card background
+            stat_card = MDCard(
+                md_bg_color=(1.0, 1.0, 1.0, 1),
+                elevation=3,
+                padding="12dp",
+                size_hint_x=None,
+                width="100dp"
+            )
             
+            stat_layout = MDBoxLayout(orientation='vertical', spacing="6dp")
+            
+            # Icon with enhanced styling
+            icon_label = MDLabel(
+                text=stat["icon"],
+                font_size="24sp",
+                halign="center",
+                size_hint_y=None,
+                height="28dp"
+            )
+            
+            # Number with color coordination
             number_label = MDLabel(
                 text=stat["number"],
                 font_style="H3",
-                theme_text_color="Custom",
+                theme_text_color="Custom", 
                 text_color=stat["color"],
                 halign="center",
+                size_hint_y=None,
+                height="32dp",
                 bold=True
             )
             
+            # Description with proper text handling
             desc_label = MDLabel(
                 text=stat["label"],
                 font_style="Caption",
                 theme_text_color="Secondary",
-                halign="center"
+                halign="center",
+                size_hint_y=None,
+                height="30dp",
+                text_size=("90dp", None),  # Proper width for text wrapping
+                valign="middle"
             )
+            desc_label.bind(texture_size=desc_label.setter('size'))
             
+            stat_layout.add_widget(icon_label)
             stat_layout.add_widget(number_label)
             stat_layout.add_widget(desc_label)
-            layout.add_widget(stat_layout)
+            stat_card.add_widget(stat_layout)
+            layout.add_widget(stat_card)
         
         card.add_widget(layout)
         return card
     
     def create_add_medication_card(self) -> MDCard:
-        """Create add medication card"""
+        """Create enhanced add medication card with gradient colors"""
         app = MDApp.get_running_app()
         
         card = MDCard(
-            md_bg_color=app.theme_cls.primary_color,
+            md_bg_color=HealthAppColors.MEDICATION,  # Use vibrant medication color
             size_hint_y=None,
             height="100dp",
-            elevation=6,
+            elevation=8,  # Higher elevation for prominence
             padding="20dp"
         )
         
