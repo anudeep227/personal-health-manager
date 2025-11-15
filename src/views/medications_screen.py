@@ -89,7 +89,7 @@ class MedicationsScreen(BaseScreen):
                 "number": "5", 
                 "label": "Active\nMedications", 
                 "color": HealthAppColors.MEDICATION,
-                "icon": "💊"
+                "icon": "[MED]"
             },
             {
                 "number": "3", 
@@ -352,10 +352,11 @@ class MedicationsScreen(BaseScreen):
                 reminder_text = "Reminders ON" if medication.reminder_enabled else "Reminders OFF"
                 frequency_text = medication.frequency or "As needed"
                 
+                # Create medication item with proper text wrapping
                 item = ThreeLineListItem(
-                    text=medication.name,
-                    secondary_text=f"Dosage: {medication.dosage or 'Not specified'}",
-                    tertiary_text=f"{frequency_text} | {reminder_text}",
+                    text=medication.name[:30] + "..." if len(medication.name) > 30 else medication.name,
+                    secondary_text=f"Dosage: {(medication.dosage or 'Not specified')[:40]}{'...' if medication.dosage and len(medication.dosage) > 40 else ''}",
+                    tertiary_text=f"{frequency_text[:20]}{'...' if len(frequency_text) > 20 else ''} | {reminder_text}",
                     on_release=lambda x, med_id=medication.id: self.edit_medication(med_id)
                 )
                 
@@ -393,10 +394,10 @@ class MedicationsScreen(BaseScreen):
         # Create form layout with proper sizing
         form_layout = MDBoxLayout(
             orientation='vertical', 
-            spacing="12dp",
+            spacing="16dp",
             size_hint_y=None,
-            height="320dp",
-            padding="16dp"
+            height="400dp",  # Increased height to prevent overflow
+            padding="20dp"
         )
         
         # Medication name
@@ -404,7 +405,8 @@ class MedicationsScreen(BaseScreen):
             hint_text="Medication Name",
             text=medication.name if medication else "",
             size_hint_y=None,
-            height="48dp"
+            height="56dp",  # Improved height
+            mode="outlined"
         )
         form_layout.add_widget(name_field)
         
@@ -413,7 +415,8 @@ class MedicationsScreen(BaseScreen):
             hint_text="Dosage (e.g., 500mg, 1 tablet)",
             text=medication.dosage if medication else "",
             size_hint_y=None,
-            height="48dp"
+            height="56dp",
+            mode="outlined"
         )
         form_layout.add_widget(dosage_field)
         
@@ -422,7 +425,8 @@ class MedicationsScreen(BaseScreen):
             hint_text="Frequency (e.g., 2 times daily)",
             text=medication.frequency if medication else "",
             size_hint_y=None,
-            height="48dp"
+            height="56dp",
+            mode="outlined"
         )
         form_layout.add_widget(frequency_field)
         
@@ -432,7 +436,8 @@ class MedicationsScreen(BaseScreen):
             text=medication.instructions if medication else "",
             multiline=True,
             size_hint_y=None,
-            height="60dp"
+            height="80dp",  # Increased height for multiline
+            mode="outlined"
         )
         form_layout.add_widget(instructions_field)
         
@@ -440,8 +445,8 @@ class MedicationsScreen(BaseScreen):
         reminder_layout = MDBoxLayout(
             orientation='horizontal', 
             size_hint_y=None, 
-            height="40dp",
-            spacing="8dp"
+            height="48dp",  # Increased height
+            spacing="12dp"
         )
         reminder_checkbox = MDCheckbox(
             size_hint_x=None,
@@ -450,9 +455,11 @@ class MedicationsScreen(BaseScreen):
         )
         reminder_label = MDLabel(
             text="Enable reminders",
-            size_hint_x=None,
-            width="150dp",
-            theme_text_color="Primary"
+            theme_text_color="Primary",
+            font_style="Body1",
+            text_size=(None, None),  # Allow natural sizing
+            halign="left",
+            valign="middle"
         )
         reminder_layout.add_widget(reminder_checkbox)
         reminder_layout.add_widget(reminder_label)

@@ -187,7 +187,7 @@ class BaseScreen(Screen):
             orientation="vertical",
             spacing="16dp",
             size_hint_y=None,
-            height="120dp",
+            height="140dp",  # Increased height to accommodate larger text
             padding="20dp"
         )
         
@@ -198,9 +198,10 @@ class BaseScreen(Screen):
             font_style="Body1",
             halign="left",
             valign="top",
-            text_size=("280dp", None),  # Set width for text wrapping
+            text_size=("300dp", None),  # Increased width for better text wrapping
             size_hint_y=None,
-            height="80dp"
+            height="100dp",  # Increased height
+            markup=True  # Enable markup for better text formatting
         )
         message_label.bind(texture_size=message_label.setter('size'))
         content.add_widget(message_label)
@@ -241,8 +242,8 @@ class BaseScreen(Screen):
             type="custom",
             content_cls=content,
             buttons=buttons,
-            size_hint=(0.85, None),  # Slightly wider
-            height="250dp",  # Adjusted height
+            size_hint=(0.9, None),  # Wider for better text display
+            height="320dp",  # Adjusted height to accommodate larger content
             elevation=8,
             auto_dismiss=False  # Prevent accidental dismissal
         )

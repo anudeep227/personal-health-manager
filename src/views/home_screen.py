@@ -263,7 +263,7 @@ class HomeScreen(BaseScreen):
         
         # Welcome text
         welcome_text = MDLabel(
-            text="Good Morning! 🌅",
+            text="Good Morning!",
             font_style="H5",
             theme_text_color="Custom",
             text_color=(1, 1, 1, 1),
@@ -272,13 +272,13 @@ class HomeScreen(BaseScreen):
         
         # Date and health tip with proper wrapping
         date_text = MDLabel(
-            text=f"Today is {datetime.now().strftime('%A, %B %d')}\n💡 Remember to stay hydrated and take your medications on time!",
+            text=f"Today is {datetime.now().strftime('%A, %B %d')}\nTip: Remember to stay hydrated and take your medications on time!",
             font_style="Body1",
             theme_text_color="Custom",
             text_color=(0.9, 0.9, 0.9, 1),
             size_hint_y=None,
             height="60dp",
-            text_size=("280dp", None),  # Enable text wrapping
+            text_size=("300dp", None),  # Enable text wrapping
             halign="left",
             valign="top"
         )
@@ -362,7 +362,7 @@ class HomeScreen(BaseScreen):
         
         # Enhanced title with icon
         title = MDLabel(
-            text="🏥 Health Overview",
+            text="Health Overview",
             font_style="H6",
             theme_text_color="Primary",
             size_hint_y=None,
@@ -377,19 +377,19 @@ class HomeScreen(BaseScreen):
         # Enhanced health statistics with colors
         stats = [
             {
-                "icon": "💊", 
+                "icon": "[MED]", 
                 "number": "3", 
                 "label": "Medications\nToday",
                 "color": HealthAppColors.MEDICATION
             },
             {
-                "icon": "📅", 
+                "icon": "[CAL]", 
                 "number": "1", 
                 "label": "Upcoming\nAppt",
                 "color": HealthAppColors.APPOINTMENT
             },
             {
-                "icon": "📊", 
+                "icon": "[CHT]", 
                 "number": "12", 
                 "label": "Health\nRecords",
                 "color": HealthAppColors.VITAL_SIGNS
@@ -463,7 +463,7 @@ class HomeScreen(BaseScreen):
         
         # Title with enhanced styling
         title = MDLabel(
-            text="📊 Recent Activity",
+            text="Recent Activity",
             font_style="H6",
             theme_text_color="Primary",
             size_hint_y=None,
@@ -484,35 +484,35 @@ class HomeScreen(BaseScreen):
         # Enhanced sample activities with colors and icons
         activities = [
             {
-                "icon": "💊",
+                "icon": "[MED]",
                 "primary": "Took Aspirin 100mg",
                 "secondary": "2 hours ago",
                 "status": "completed",
                 "color": HealthAppColors.COMPLETED
             },
             {
-                "icon": "📄",
+                "icon": "[RPT]",
                 "primary": "Added Blood Test Report",
                 "secondary": "Yesterday",
                 "status": "completed", 
                 "color": HealthAppColors.REPORT
             },
             {
-                "icon": "🏥",
+                "icon": "[APT]",
                 "primary": "Cardiology Appointment",
                 "secondary": "3 days ago",
                 "status": "completed",
                 "color": HealthAppColors.APPOINTMENT
             },
             {
-                "icon": "📋",
+                "icon": "[REC]",
                 "primary": "Updated Health Records",
                 "secondary": "5 days ago", 
                 "status": "completed",
                 "color": HealthAppColors.VITAL_SIGNS
             },
             {
-                "icon": "🔔",
+                "icon": "[RMD]",
                 "primary": "Set Medication Reminder",
                 "secondary": "1 week ago",
                 "status": "completed",

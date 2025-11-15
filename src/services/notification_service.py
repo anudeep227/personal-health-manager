@@ -155,7 +155,7 @@ class NotificationService:
     def _send_medication_reminder(self, medication):
         """Send medication reminder notification"""
         try:
-            title = "💊 Medication Reminder"
+            title = "Medication Reminder"
             message = f"Time to take {medication.name}"
             if medication.dosage:
                 message += f" ({medication.dosage})"
@@ -182,7 +182,7 @@ class NotificationService:
                 minutes = time_until.seconds // 60
                 time_str = f"in {minutes} minute(s)"
             
-            title = "📅 Appointment Reminder"
+            title = "Appointment Reminder"
             message = f"Appointment with {appointment.doctor_name} {time_str}"
             
             self._send_notification(title, message, timeout=10)
