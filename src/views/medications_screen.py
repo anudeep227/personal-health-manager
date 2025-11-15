@@ -144,8 +144,11 @@ class MedicationsScreen(BaseScreen):
             text="Set up reminders and track your medications",
             font_style="Body2",
             theme_text_color="Custom",
-            text_color=(0.9, 0.9, 0.9, 1)
+            text_color=(0.9, 0.9, 0.9, 1),
+            text_size=("200dp", None),  # Enable text wrapping
+            halign="left"
         )
+        subtitle.bind(texture_size=subtitle.setter('size'))
         
         text_layout.add_widget(title)
         text_layout.add_widget(subtitle)
@@ -341,28 +344,40 @@ class MedicationsScreen(BaseScreen):
             self.show_error(f"Failed to load medication: {str(e)}")
     
     def show_medication_dialog(self, medication=None):
-        """Show medication add/edit dialog"""
-        # Create form layout
-        form_layout = BoxLayout(orientation='vertical', spacing=10)
+        """Show medication add/edit dialog with proper sizing"""
+        # Create form layout with proper sizing
+        form_layout = MDBoxLayout(
+            orientation='vertical', 
+            spacing="12dp",
+            size_hint_y=None,
+            height="320dp",
+            padding="16dp"
+        )
         
         # Medication name
         name_field = MDTextField(
             hint_text="Medication Name",
-            text=medication.name if medication else ""
+            text=medication.name if medication else "",
+            size_hint_y=None,
+            height="48dp"
         )
         form_layout.add_widget(name_field)
         
         # Dosage
         dosage_field = MDTextField(
             hint_text="Dosage (e.g., 500mg, 1 tablet)",
-            text=medication.dosage if medication else ""
+            text=medication.dosage if medication else "",
+            size_hint_y=None,
+            height="48dp"
         )
         form_layout.add_widget(dosage_field)
         
         # Frequency
         frequency_field = MDTextField(
-            hint_text="Frequency (e.g., 2 times daily, every 8 hours)",
-            text=medication.frequency if medication else ""
+            hint_text="Frequency (e.g., 2 times daily)",
+            text=medication.frequency if medication else "",
+            size_hint_y=None,
+            height="48dp"
         )
         form_layout.add_widget(frequency_field)
         
@@ -370,18 +385,30 @@ class MedicationsScreen(BaseScreen):
         instructions_field = MDTextField(
             hint_text="Instructions (e.g., take with food)",
             text=medication.instructions if medication else "",
-            multiline=True
+            multiline=True,
+            size_hint_y=None,
+            height="60dp"
         )
         form_layout.add_widget(instructions_field)
         
-        # Reminder checkbox
-        reminder_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height="40dp")
+        # Reminder checkbox with proper layout
+        reminder_layout = MDBoxLayout(
+            orientation='horizontal', 
+            size_hint_y=None, 
+            height="40dp",
+            spacing="8dp"
+        )
         reminder_checkbox = MDCheckbox(
             size_hint_x=None,
             width="40dp",
             active=medication.reminder_enabled if medication else True
         )
-        reminder_label = MDLabel(text="Enable reminders")
+        reminder_label = MDLabel(
+            text="Enable reminders",
+            size_hint_x=None,
+            width="150dp",
+            theme_text_color="Primary"
+        )
         reminder_layout.add_widget(reminder_checkbox)
         reminder_layout.add_widget(reminder_label)
         form_layout.add_widget(reminder_layout)
@@ -434,11 +461,13 @@ class MedicationsScreen(BaseScreen):
             except Exception as e:
                 self.show_error(f"Failed to save medication: {str(e)}")
         
-        # Create dialog
+        # Create dialog with proper sizing
         dialog = MDDialog(
             title="Add Medication" if not medication else "Edit Medication",
             type="custom",
             content_cls=form_layout,
+            size_hint=(0.9, None),  # 90% width, auto height
+            height="450dp",  # Fixed height to prevent overflow
             buttons=[
                 MDFlatButton(
                     text="CANCEL",

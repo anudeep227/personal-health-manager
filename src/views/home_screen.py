@@ -270,15 +270,19 @@ class HomeScreen(BaseScreen):
             bold=True
         )
         
-        # Date and health tip
+        # Date and health tip with proper wrapping
         date_text = MDLabel(
             text=f"Today is {datetime.now().strftime('%A, %B %d')}\n💡 Remember to stay hydrated and take your medications on time!",
             font_style="Body1",
             theme_text_color="Custom",
             text_color=(0.9, 0.9, 0.9, 1),
             size_hint_y=None,
-            height="60dp"
+            height="60dp",
+            text_size=("280dp", None),  # Enable text wrapping
+            halign="left",
+            valign="top"
         )
+        date_text.bind(texture_size=date_text.setter('size'))
         
         layout.add_widget(welcome_text)
         layout.add_widget(date_text)
@@ -326,8 +330,10 @@ class HomeScreen(BaseScreen):
                 md_bg_color=action["color"],
                 theme_text_color="Custom",
                 text_color=(1, 1, 1, 1),
-                font_size="14sp",
+                font_size="12sp",  # Smaller font for better fit
                 elevation=3,
+                size_hint_y=None,
+                height="50dp",  # Fixed height
                 on_press=lambda x, screen=action["screen"]: self.navigate_to_screen(screen)
             )
             actions_grid.add_widget(btn)
@@ -403,8 +409,11 @@ class HomeScreen(BaseScreen):
                 theme_text_color="Secondary",
                 halign="center",
                 size_hint_y=None,
-                height="40dp"
+                height="40dp",
+                text_size=("80dp", None),  # Enable text wrapping for small cards
+                valign="middle"
             )
+            desc_label.bind(texture_size=desc_label.setter('size'))
             
             stat_layout.add_widget(icon_label)
             stat_layout.add_widget(number_label)

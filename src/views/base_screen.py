@@ -191,15 +191,18 @@ class BaseScreen(Screen):
             padding="20dp"
         )
         
-        # Message text
+        # Message text with proper wrapping
         message_label = MDLabel(
             text=message,
             theme_text_color="Primary",
             font_style="Body1",
             halign="left",
             valign="top",
-            text_size=(None, None)
+            text_size=("280dp", None),  # Set width for text wrapping
+            size_hint_y=None,
+            height="80dp"
         )
+        message_label.bind(texture_size=message_label.setter('size'))
         content.add_widget(message_label)
         
         # Create buttons
@@ -232,15 +235,16 @@ class BaseScreen(Screen):
             )
             buttons.append(ok_btn)
         
-        # Create and show dialog
+        # Create and show dialog with proper sizing
         self.dialog = MDDialog(
             title=title,
             type="custom",
             content_cls=content,
             buttons=buttons,
-            size_hint=(0.8, None),
-            height="300dp",
-            elevation=8
+            size_hint=(0.85, None),  # Slightly wider
+            height="250dp",  # Adjusted height
+            elevation=8,
+            auto_dismiss=False  # Prevent accidental dismissal
         )
         
         self.dialog.open()
@@ -305,8 +309,8 @@ class BaseScreen(Screen):
             title="Please Wait",
             type="custom",
             content_cls=content,
-            size_hint=(0.7, None),
-            height="200dp",
+            size_hint=(0.75, None),  # Better width
+            height="180dp",  # Adjusted height
             auto_dismiss=False
         )
         
