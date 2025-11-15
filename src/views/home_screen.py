@@ -338,22 +338,22 @@ class HomeScreen(BaseScreen):
         # Stats grid with better spacing
         stats_grid = GridLayout(cols=3, spacing="16dp", size_hint_y=None, height="140dp")
         
-        # Enhanced health statistics with colors (no icons to avoid display issues)
+        # Enhanced health statistics with diverse vibrant colors
         stats = [
             {
                 "number": "3", 
                 "label": "Medications\nToday",
-                "color": HealthAppColors.MEDICATION
+                "color": HealthAppColors.PURPLE  # Purple
             },
             {
                 "number": "1", 
                 "label": "Upcoming\nAppt",
-                "color": HealthAppColors.APPOINTMENT
+                "color": HealthAppColors.CYAN  # Bright cyan
             },
             {
                 "number": "12", 
                 "label": "Health\nRecords",
-                "color": HealthAppColors.VITAL_SIGNS
+                "color": HealthAppColors.DEEP_ORANGE  # Deep orange
             }
         ]
         
@@ -435,42 +435,42 @@ class HomeScreen(BaseScreen):
             padding="4dp"
         )
         
-        # Enhanced sample activities with colors
+        # Enhanced sample activities with diverse vibrant colors
         activities = [
             {
                 "icon": "MED",
                 "primary": "Took Aspirin 100mg",
                 "secondary": "2 hours ago",
                 "status": "completed",
-                "color": HealthAppColors.COMPLETED
+                "color": HealthAppColors.MEDICATION  # Purple
             },
             {
                 "icon": "RPT",
                 "primary": "Added Blood Test Report",
                 "secondary": "Yesterday",
                 "status": "completed", 
-                "color": HealthAppColors.REPORT
+                "color": HealthAppColors.CYAN  # Bright cyan
             },
             {
                 "icon": "APT",
                 "primary": "Cardiology Appointment",
                 "secondary": "3 days ago",
                 "status": "completed",
-                "color": HealthAppColors.APPOINTMENT
+                "color": HealthAppColors.INDIGO  # Deep indigo
             },
             {
                 "icon": "REC",
                 "primary": "Updated Health Records",
                 "secondary": "5 days ago", 
                 "status": "completed",
-                "color": HealthAppColors.VITAL_SIGNS
+                "color": HealthAppColors.LIME  # Bright lime
             },
             {
                 "icon": "RMD",
                 "primary": "Set Medication Reminder",
                 "secondary": "1 week ago",
                 "status": "completed",
-                "color": HealthAppColors.REMINDER
+                "color": HealthAppColors.AMBER  # Bright amber
             }
         ]
         
@@ -491,16 +491,17 @@ class HomeScreen(BaseScreen):
                 height="36dp"
             )
             
-            # Status indicator with just color circle
+            # Status indicator with safe text
             icon_label = MDLabel(
-                text="●",  # Simple bullet point
+                text="*",  # Simple asterisk
                 font_size="12sp",
                 size_hint_x=None,
                 width="20dp",
                 halign="center",
                 valign="center",
                 theme_text_color="Custom",
-                text_color=activity["color"]
+                text_color=activity["color"],
+                bold=True
             )
             
             # Activity text content

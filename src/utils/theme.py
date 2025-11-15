@@ -51,6 +51,16 @@ class HealthAppColors:
     REMINDER = (1.0, 0.84, 0.0, 1)      # Golden yellow for reminders
     ACHIEVEMENT = (0.0, 0.80, 0.40, 1)  # Emerald green for achievements
     
+    # Additional vibrant colors for variety
+    PINK = (0.91, 0.12, 0.39, 1)        # Vibrant pink
+    CYAN = (0.0, 0.74, 0.83, 1)         # Bright cyan
+    LIME = (0.68, 0.85, 0.0, 1)         # Bright lime green
+    AMBER = (1.0, 0.76, 0.03, 1)        # Bright amber
+    INDIGO = (0.25, 0.32, 0.71, 1)      # Deep indigo
+    TEAL = (0.0, 0.59, 0.53, 1)         # Material teal
+    DEEP_ORANGE = (1.0, 0.34, 0.13, 1)  # Deep orange
+    PURPLE = (0.61, 0.15, 0.69, 1)      # Material purple
+    
     # Card Background Colors with Subtle Gradients
     CARD_GRADIENT_1 = (0.98, 0.98, 1.0, 1)      # Light blue tint
     CARD_GRADIENT_2 = (1.0, 0.98, 0.98, 1)      # Light pink tint  

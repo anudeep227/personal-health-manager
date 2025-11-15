@@ -26,9 +26,25 @@ class ProfileScreen(BaseScreen):
     
     def setup_content(self):
         """Setup profile screen content"""
+        from kivymd.uix.boxlayout import MDBoxLayout
+        from kivymd.uix.scrollview import MDScrollView
+        
+        # Create scroll view for better layout
+        scroll = MDScrollView()
+        main_layout = MDBoxLayout(
+            orientation='vertical',
+            spacing="20dp",
+            adaptive_height=True,
+            padding="20dp"
+        )
+        
+        # Profile header card
+        header_card = self.create_profile_header()
+        main_layout.add_widget(header_card)
+        
         # Profile form
         form_card = self.create_card("Personal Information")
-        form_layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
+        form_layout = MDBoxLayout(orientation='vertical', spacing="16dp", padding="20dp")
         
         # Name fields
         self.first_name_field = MDTextField(
@@ -76,10 +92,65 @@ class ProfileScreen(BaseScreen):
         form_layout.add_widget(save_btn)
         
         form_card.add_widget(form_layout)
-        self.content_layout.add_widget(form_card)
+        main_layout.add_widget(form_card)
+        
+        scroll.add_widget(main_layout)
+        self.content_layout.add_widget(scroll)
         
         # Load existing profile data
         self.load_profile_data()
+    
+    def create_profile_header(self):
+        """Create colorful profile header"""
+        from src.utils.theme import HealthAppColors
+        from kivymd.uix.boxlayout import MDBoxLayout
+        
+        card = MDCard(
+            size_hint_y=None,
+            height="150dp",
+            elevation=8,
+            padding="24dp",
+            md_bg_color=HealthAppColors.PRIMARY[500],  # Vibrant teal
+            radius=[15]
+        )
+        
+        layout = MDBoxLayout(orientation='vertical', spacing="12dp")
+        
+        # Profile avatar (using initials)
+        avatar_card = MDCard(
+            size_hint=(None, None),
+            size=("80dp", "80dp"),
+            md_bg_color=HealthAppColors.ACCENT['A200'],  # Bright blue
+            radius=[40],
+            elevation=4,
+            pos_hint={'center_x': 0.5}
+        )
+        
+        avatar_label = MDLabel(
+            text="JP",  # Default initials
+            font_style="H4",
+            halign="center",
+            valign="center",
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1),
+            bold=True
+        )
+        avatar_card.add_widget(avatar_label)
+        layout.add_widget(avatar_card)
+        
+        # Welcome text
+        welcome_label = MDLabel(
+            text="Welcome to Your Health Profile",
+            font_style="H6",
+            halign="center",
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1),
+            bold=True
+        )
+        layout.add_widget(welcome_label)
+        
+        card.add_widget(layout)
+        return card
     
     def load_profile_data(self):
         """Load existing profile data"""

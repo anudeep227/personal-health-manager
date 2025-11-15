@@ -68,45 +68,151 @@ class BaseScreen(Screen):
         return []
     
     def open_navigation_drawer(self):
-        """Open navigation drawer"""
+        """Open navigation drawer with sliding animation"""
         if self.controller:
             # Create navigation menu
             menu_items = [
-                ("home", "Home", "home"),
-                ("account", "Profile", "profile"),
-                ("pill", "Medications", "medications"),
-                ("file-document", "Reports", "reports"),
-                ("calendar", "Appointments", "appointments"),
-                ("heart-pulse", "Health Records", "health_records"),
-                ("cog", "Settings", "settings"),
+                ("Home", "home"),
+                ("Profile", "profile"),
+                ("Medications", "medications"),
+                ("Reports", "reports"),
+                ("Appointments", "appointments"),
+                ("Health Records", "health_records"),
+                ("Settings", "settings"),
             ]
             
-            # Show navigation options
-            self.show_navigation_menu(menu_items)
+            # Show navigation options with sliding drawer
+            self.show_sliding_navigation(menu_items)
     
-    def show_navigation_menu(self, menu_items):
-        """Show navigation menu dialog"""
-        menu_list = MDList()
+    def show_sliding_navigation(self, menu_items):
+        """Show navigation menu with sliding animation"""
+        from kivymd.uix.boxlayout import MDBoxLayout
+        from kivymd.uix.list import MDList, OneLineIconListItem
+        from kivymd.uix.scrollview import MDScrollView
+        from kivy.animation import Animation
+        from src.utils.theme import HealthAppColors
         
-        for icon, title, screen_name in menu_items:
-            item = OneLineListItem(
-                text=title,
-                on_release=lambda x, screen=screen_name: self.navigate_to_screen(screen)
+        # Create sliding menu panel
+        if not hasattr(self, 'nav_panel'):
+            self.nav_panel = MDCard(
+                size_hint=(None, 1),
+                width="0dp",  # Start hidden
+                md_bg_color=(0.98, 0.98, 0.98, 1),
+                elevation=16,
+                radius=[0, 16, 16, 0],
+                pos_hint={'x': 0, 'y': 0}
             )
-            menu_list.add_widget(item)
-        
-        dialog = MDDialog(
-            title="Navigation",
-            type="custom",
-            content_cls=menu_list,
-            buttons=[
-                MDFlatButton(
-                    text="CLOSE",
-                    on_release=lambda x: dialog.dismiss()
-                )
+            
+            # Panel content
+            panel_layout = MDBoxLayout(
+                orientation='vertical',
+                spacing="8dp",
+                padding="16dp"
+            )
+            
+            # Header
+            header = MDCard(
+                size_hint_y=None,
+                height="100dp",
+                md_bg_color=HealthAppColors.TEAL,
+                elevation=0,
+                padding="16dp",
+                radius=[8]
+            )
+            
+            header_label = MDLabel(
+                text="Health Manager\\nNavigation",
+                font_style="H6",
+                theme_text_color="Custom",
+                text_color=(1, 1, 1, 1),
+                bold=True,
+                halign="left"
+            )
+            header.add_widget(header_label)
+            panel_layout.add_widget(header)
+            
+            # Scrollable menu
+            scroll = MDScrollView()
+            menu_layout = MDBoxLayout(
+                orientation='vertical',
+                spacing="4dp",
+                adaptive_height=True
+            )
+            
+            # Colorful menu items
+            colors = [
+                HealthAppColors.LIME,      # Home
+                HealthAppColors.PURPLE,    # Profile  
+                HealthAppColors.AMBER,     # Medications
+                HealthAppColors.CYAN,      # Reports
+                HealthAppColors.INDIGO,    # Appointments
+                HealthAppColors.DEEP_ORANGE, # Health Records
+                HealthAppColors.PINK       # Settings
             ]
-        )
-        dialog.open()
+            
+            for i, (title, screen_name) in enumerate(menu_items):
+                item = MDCard(
+                    size_hint_y=None,
+                    height="48dp",
+                    md_bg_color=colors[i % len(colors)] + (0.15,),  # Light tint
+                    radius=[8],
+                    elevation=2,
+                    padding="12dp",
+                    on_release=lambda x, screen=screen_name: self._slide_navigate(screen)
+                )
+                
+                item_layout = MDBoxLayout(orientation='horizontal', spacing="12dp")
+                
+                # Icon (first letter)
+                icon = MDLabel(
+                    text=title[0],
+                    size_hint_x=None,
+                    width="30dp",
+                    font_style="H6",
+                    theme_text_color="Custom",
+                    text_color=colors[i % len(colors)],
+                    halign="center",
+                    bold=True
+                )
+                
+                # Title
+                title_label = MDLabel(
+                    text=title,
+                    font_style="Subtitle1",
+                    theme_text_color="Primary",
+                    valign="center"
+                )
+                
+                item_layout.add_widget(icon)
+                item_layout.add_widget(title_label)
+                item.add_widget(item_layout)
+                menu_layout.add_widget(item)
+            
+            scroll.add_widget(menu_layout)
+            panel_layout.add_widget(scroll)
+            self.nav_panel.add_widget(panel_layout)
+            
+            # Add to main layout
+            self.main_layout.add_widget(self.nav_panel)
+        
+        # Animate slide in
+        if self.nav_panel.width == 0:
+            anim = Animation(width="280dp", duration=0.3, t="out_quart")
+            anim.start(self.nav_panel)
+        else:
+            # Slide out
+            anim = Animation(width="0dp", duration=0.3, t="out_quart")
+            anim.start(self.nav_panel)
+    
+    def _slide_navigate(self, screen_name):
+        """Navigate and close sliding menu"""
+        # Close menu first
+        if hasattr(self, 'nav_panel'):
+            anim = Animation(width="0dp", duration=0.3, t="out_quart")
+            anim.start(self.nav_panel)
+        
+        # Navigate
+        self.navigate_to_screen(screen_name)
     
     def navigate_to_screen(self, screen_name):
         """Navigate to specified screen"""
