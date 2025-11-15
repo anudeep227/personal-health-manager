@@ -70,11 +70,13 @@ class DocumentAnalysisScreen(BaseScreen):
     
     def create_header_card(self) -> MDCard:
         """Create header information card"""
+        from kivymd.app import MDApp
+        app = MDApp.get_running_app()
         card = MDCard(
             size_hint_y=None,
             height="120dp",
             padding=20,
-            md_bg_color=self.theme_cls.primary_color,
+            md_bg_color=app.theme_cls.primary_color,
             elevation=3
         )
         

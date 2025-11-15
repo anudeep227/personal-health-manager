@@ -30,10 +30,14 @@ class HealthApp(MDApp):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.title = "Personal Health Manager"
+        self.title = "💊 Personal Health Manager"
+        
+        # Beautiful health app theme - simplified for compatibility
         self.theme_cls.theme_style = "Light"
-        self.theme_cls.primary_palette = "Blue"
-        self.theme_cls.accent_palette = "Cyan"
+        self.theme_cls.primary_palette = "Teal"
+        self.theme_cls.primary_hue = "500"
+        self.theme_cls.accent_palette = "LightBlue"
+        self.theme_cls.accent_hue = "A400"
         
         # Initialize services
         self.config = Config()

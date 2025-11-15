@@ -1,18 +1,25 @@
 """
-Medications screen for managing medications and reminders
+Beautiful Medications screen with Material Design 3 components
 """
 
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.gridlayout import GridLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
-from kivymd.uix.button import MDRaisedButton, MDFlatButton
+from kivymd.uix.button import MDRaisedButton, MDFlatButton, MDIconButton
 from kivymd.uix.card import MDCard
 from kivymd.uix.list import MDList, ThreeLineListItem
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.selectioncontrol import MDCheckbox
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.chip import MDChip
+from kivymd.app import MDApp
+from kivymd.uix.progressbar import MDProgressBar
 from datetime import datetime, time
 
 from views.base_screen import BaseScreen
+from src.utils.theme import HealthAppColors
 
 
 class MedicationsScreen(BaseScreen):
@@ -28,29 +35,253 @@ class MedicationsScreen(BaseScreen):
         ]
     
     def setup_content(self):
-        """Setup medications screen content"""
-        # Add medication button
-        add_btn = MDRaisedButton(
-            text="Add New Medication",
-            size_hint_y=None,
-            height="40dp",
-            on_release=lambda x: self.add_medication()
-        )
-        self.content_layout.add_widget(add_btn)
+        """Setup beautiful medications screen content"""
+        app = MDApp.get_running_app()
         
-        # Medications list
-        medications_card = self.create_card("Active Medications")
-        self.medications_list = MDList()
-        medications_card.add_widget(self.medications_list)
-        self.content_layout.add_widget(medications_card)
+        # Create scrollable content
+        scroll = ScrollView()
+        main_layout = MDBoxLayout(
+            orientation='vertical',
+            spacing="16dp",
+            adaptive_height=True,
+            padding=["16dp", "8dp", "16dp", "16dp"]
+        )
+        
+        # Quick stats card
+        stats_card = self.create_medication_stats_card()
+        main_layout.add_widget(stats_card)
+        
+        # Add medication hero card
+        add_card = self.create_add_medication_card()
+        main_layout.add_widget(add_card)
+        
+        # Active medications section
+        active_card = self.create_active_medications_card()
+        main_layout.add_widget(active_card)
+        
+        # Medication schedule card
+        schedule_card = self.create_schedule_card()
+        main_layout.add_widget(schedule_card)
+        
+        scroll.add_widget(main_layout)
+        self.content_layout.add_widget(scroll)
         
         # Load medications
         self.refresh_data()
     
+    def create_medication_stats_card(self) -> MDCard:
+        """Create medication statistics card"""
+        app = MDApp.get_running_app()
+        
+        card = MDCard(
+            size_hint_y=None,
+            height="120dp",
+            elevation=4,
+            padding="20dp"
+        )
+        
+        layout = MDBoxLayout(orientation='horizontal', spacing="20dp")
+        
+        # Stats
+        stats = [
+            {"number": "5", "label": "Active\nMedications", "color": HealthAppColors.MEDICATION},
+            {"number": "3", "label": "Due\nToday", "color": HealthAppColors.WARNING},
+            {"number": "2", "label": "Missed\nDoses", "color": HealthAppColors.ERROR}
+        ]
+        
+        for stat in stats:
+            stat_layout = MDBoxLayout(orientation='vertical', spacing="8dp")
+            
+            number_label = MDLabel(
+                text=stat["number"],
+                font_style="H3",
+                theme_text_color="Custom",
+                text_color=stat["color"],
+                halign="center",
+                bold=True
+            )
+            
+            desc_label = MDLabel(
+                text=stat["label"],
+                font_style="Caption",
+                theme_text_color="Secondary",
+                halign="center"
+            )
+            
+            stat_layout.add_widget(number_label)
+            stat_layout.add_widget(desc_label)
+            layout.add_widget(stat_layout)
+        
+        card.add_widget(layout)
+        return card
+    
+    def create_add_medication_card(self) -> MDCard:
+        """Create add medication card"""
+        app = MDApp.get_running_app()
+        
+        card = MDCard(
+            md_bg_color=app.theme_cls.primary_color,
+            size_hint_y=None,
+            height="100dp",
+            elevation=6,
+            padding="20dp"
+        )
+        
+        layout = MDBoxLayout(orientation='horizontal', spacing="16dp")
+        
+        # Text content
+        text_layout = MDBoxLayout(orientation='vertical', spacing="4dp")
+        
+        title = MDLabel(
+            text="Add New Medication",
+            font_style="H6",
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1),
+            bold=True
+        )
+        
+        subtitle = MDLabel(
+            text="Set up reminders and track your medications",
+            font_style="Body2",
+            theme_text_color="Custom",
+            text_color=(0.9, 0.9, 0.9, 1)
+        )
+        
+        text_layout.add_widget(title)
+        text_layout.add_widget(subtitle)
+        layout.add_widget(text_layout)
+        
+        # Add button
+        add_btn = MDIconButton(
+            icon="plus-circle",
+            theme_icon_color="Custom",
+            icon_color=(1, 1, 1, 1),
+            icon_size="40dp",
+            on_release=lambda x: self.add_medication()
+        )
+        layout.add_widget(add_btn)
+        
+        card.add_widget(layout)
+        return card
+    
+    def create_active_medications_card(self) -> MDCard:
+        """Create active medications list card"""
+        card = MDCard(
+            size_hint_y=None,
+            height="300dp",
+            elevation=4,
+            padding="20dp"
+        )
+        
+        layout = MDBoxLayout(orientation='vertical', spacing="12dp")
+        
+        # Title
+        title = MDLabel(
+            text="Active Medications",
+            font_style="H6",
+            theme_text_color="Primary",
+            size_hint_y=None,
+            height="30dp"
+        )
+        layout.add_widget(title)
+        
+        # Medications list
+        medications_scroll = ScrollView(size_hint_y=None, height="250dp")
+        self.medications_list = MDList()
+        medications_scroll.add_widget(self.medications_list)
+        layout.add_widget(medications_scroll)
+        
+        card.add_widget(layout)
+        return card
+    
+    def create_schedule_card(self) -> MDCard:
+        """Create today's medication schedule card"""
+        card = MDCard(
+            size_hint_y=None,
+            height="200dp",
+            elevation=4,
+            padding="20dp"
+        )
+        
+        layout = MDBoxLayout(orientation='vertical', spacing="12dp")
+        
+        # Title
+        title = MDLabel(
+            text="Today's Schedule",
+            font_style="H6",
+            theme_text_color="Primary",
+            size_hint_y=None,
+            height="30dp"
+        )
+        layout.add_widget(title)
+        
+        # Schedule items
+        schedule_layout = MDBoxLayout(orientation='vertical', spacing="8dp")
+        
+        # Sample schedule items
+        schedule_items = [
+            {"time": "08:00", "med": "Aspirin 100mg", "status": "taken"},
+            {"time": "12:00", "med": "Vitamin D", "status": "due"},
+            {"time": "20:00", "med": "Blood Pressure Med", "status": "upcoming"}
+        ]
+        
+        for item in schedule_items:
+            item_card = MDCard(
+                md_bg_color=(0.95, 0.95, 0.95, 1),
+                size_hint_y=None,
+                height="40dp",
+                elevation=1,
+                padding="12dp"
+            )
+            
+            item_layout = MDBoxLayout(orientation='horizontal', spacing="12dp")
+            
+            time_label = MDLabel(
+                text=item["time"],
+                font_style="Subtitle2",
+                theme_text_color="Primary",
+                size_hint_x=None,
+                width="60dp",
+                bold=True
+            )
+            
+            med_label = MDLabel(
+                text=item["med"],
+                font_style="Body2",
+                theme_text_color="Primary"
+            )
+            
+            # Status indicator
+            status_colors = {
+                "taken": HealthAppColors.SUCCESS,
+                "due": HealthAppColors.WARNING,
+                "upcoming": HealthAppColors.INFO
+            }
+            
+            status_chip = MDLabel(
+                text="✓" if item["status"] == "taken" else "●",
+                theme_text_color="Custom",
+                text_color=status_colors.get(item["status"], HealthAppColors.INFO),
+                font_size="20sp",
+                size_hint_x=None,
+                width="30dp"
+            )
+            
+            item_layout.add_widget(time_label)
+            item_layout.add_widget(med_label)
+            item_layout.add_widget(status_chip)
+            item_card.add_widget(item_layout)
+            schedule_layout.add_widget(item_card)
+        
+        layout.add_widget(schedule_layout)
+        card.add_widget(layout)
+        return card
+    
     def refresh_data(self):
         """Refresh medications list"""
         try:
-            self.medications_list.clear_widgets()
+            if hasattr(self, 'medications_list'):
+                self.medications_list.clear_widgets()
             
             db_service = self.get_database_service()
             if not db_service:

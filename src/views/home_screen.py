@@ -1,13 +1,19 @@
 """
-Home screen - Dashboard with overview of health data
+Home screen - Beautiful Material Design dashboard with health overview
 """
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 from kivymd.uix.label import MDLabel
-from kivymd.uix.button import MDRaisedButton, MDFlatButton
+from kivymd.uix.button import MDRaisedButton, MDFlatButton, MDIconButton
 from kivymd.uix.card import MDCard
-from kivymd.uix.list import MDList, TwoLineListItem
+from kivymd.uix.list import MDList, TwoLineListItem, ThreeLineListItem
+from kivymd.uix.toolbar import MDTopAppBar
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.app import MDApp
+from kivymd.uix.progressbar import MDProgressBar
+from kivymd.uix.chip import MDChip
 from datetime import datetime, timedelta
 
 from views.base_screen import BaseScreen
@@ -26,28 +32,36 @@ class HomeScreen(BaseScreen):
         ]
     
     def setup_content(self):
-        """Setup home screen content"""
-        # Welcome message
-        welcome_label = MDLabel(
-            text=f"Welcome back! Today is {datetime.now().strftime('%B %d, %Y')}",
-            theme_text_color="Primary",
-            size_hint_y=None,
-            height="40dp"
+        """Setup beautiful Material Design home screen content"""
+        app = MDApp.get_running_app()
+        
+        # Create scrollable content
+        scroll = ScrollView()
+        main_layout = MDBoxLayout(
+            orientation='vertical',
+            spacing="16dp",
+            adaptive_height=True,
+            padding=["16dp", "8dp", "16dp", "16dp"]
         )
-        self.content_layout.add_widget(welcome_label)
         
-        # Quick stats grid
-        stats_grid = GridLayout(cols=2, spacing=10, size_hint_y=None, height="120dp")
+        # Welcome Hero Card
+        hero_card = self.create_hero_welcome_card()
+        main_layout.add_widget(hero_card)
         
-        # Medications due today
-        med_card = self.create_stat_card("💊", "Medications", "Loading...", lambda: self.navigate_to_screen('medications'))
-        stats_grid.add_widget(med_card)
+        # Quick Actions Grid
+        actions_card = self.create_quick_actions_card()
+        main_layout.add_widget(actions_card)
         
-        # Upcoming appointments
-        appt_card = self.create_stat_card("📅", "Appointments", "Loading...", lambda: self.navigate_to_screen('appointments'))
-        stats_grid.add_widget(appt_card)
+        # Health Overview Cards
+        health_overview = self.create_health_overview_section()
+        main_layout.add_widget(health_overview)
         
-        self.content_layout.add_widget(stats_grid)
+        # Recent Activity Card
+        recent_card = self.create_recent_activity_card()
+        main_layout.add_widget(recent_card)
+        
+        scroll.add_widget(main_layout)
+        self.content_layout.add_widget(scroll)
         
         # Recent activity
         activity_card = self.create_card("Recent Activity")
@@ -232,3 +246,218 @@ class HomeScreen(BaseScreen):
                 "Health Manager", 
                 "You have 2 medications due today"
             )
+    
+    def create_hero_welcome_card(self) -> MDCard:
+        """Create beautiful hero welcome card"""
+        app = MDApp.get_running_app()
+        
+        card = MDCard(
+            md_bg_color=app.theme_cls.primary_color,
+            size_hint_y=None,
+            height="140dp",
+            elevation=8,
+            padding="24dp"
+        )
+        
+        layout = MDBoxLayout(orientation='vertical', spacing="8dp")
+        
+        # Welcome text
+        welcome_text = MDLabel(
+            text="Good Morning! 🌅",
+            font_style="H5",
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1),
+            bold=True
+        )
+        
+        # Date and health tip
+        date_text = MDLabel(
+            text=f"Today is {datetime.now().strftime('%A, %B %d')}\n💡 Remember to stay hydrated and take your medications on time!",
+            font_style="Body1",
+            theme_text_color="Custom",
+            text_color=(0.9, 0.9, 0.9, 1),
+            size_hint_y=None,
+            height="60dp"
+        )
+        
+        layout.add_widget(welcome_text)
+        layout.add_widget(date_text)
+        card.add_widget(layout)
+        
+        return card
+    
+    def create_quick_actions_card(self) -> MDCard:
+        """Create quick actions card with Material Design buttons"""
+        app = MDApp.get_running_app()
+        
+        card = MDCard(
+            size_hint_y=None,
+            height="200dp",
+            elevation=4,
+            padding="20dp"
+        )
+        
+        layout = MDBoxLayout(orientation='vertical', spacing="16dp")
+        
+        # Title
+        title = MDLabel(
+            text="Quick Actions",
+            font_style="H6",
+            theme_text_color="Primary",
+            size_hint_y=None,
+            height="30dp"
+        )
+        layout.add_widget(title)
+        
+        # Actions grid
+        actions_grid = GridLayout(cols=2, spacing="12dp", size_hint_y=None, height="140dp")
+        
+        # Action buttons with icons and colors
+        actions = [
+            {"text": "Add Medication", "color": app.theme_cls.accent_color, "screen": "medications"},
+            {"text": "Book Appointment", "color": (0.3, 0.7, 0.9, 1), "screen": "appointments"},
+            {"text": "Upload Report", "color": (0.9, 0.5, 0.3, 1), "screen": "reports"},
+            {"text": "Track Vitals", "color": (0.8, 0.3, 0.5, 1), "screen": "health_records"}
+        ]
+        
+        for action in actions:
+            btn = MDRaisedButton(
+                text=action["text"],
+                md_bg_color=action["color"],
+                theme_text_color="Custom",
+                text_color=(1, 1, 1, 1),
+                font_size="14sp",
+                elevation=3,
+                on_press=lambda x, screen=action["screen"]: self.navigate_to_screen(screen)
+            )
+            actions_grid.add_widget(btn)
+        
+        layout.add_widget(actions_grid)
+        card.add_widget(layout)
+        
+        return card
+    
+    def create_health_overview_section(self) -> MDCard:
+        """Create health overview with statistics"""
+        app = MDApp.get_running_app()
+        
+        card = MDCard(
+            size_hint_y=None,
+            height="180dp",
+            elevation=4,
+            padding="20dp"
+        )
+        
+        layout = MDBoxLayout(orientation='vertical', spacing="16dp")
+        
+        # Title
+        title = MDLabel(
+            text="Health Overview",
+            font_style="H6",
+            theme_text_color="Primary",
+            size_hint_y=None,
+            height="30dp"
+        )
+        layout.add_widget(title)
+        
+        # Stats grid
+        stats_grid = GridLayout(cols=3, spacing="12dp", size_hint_y=None, height="120dp")
+        
+        # Health statistics
+        stats = [
+            {"icon": "💊", "number": "3", "label": "Medications\nToday"},
+            {"icon": "📅", "number": "1", "label": "Upcoming\nAppt"},
+            {"icon": "📊", "number": "12", "label": "Health\nRecords"}
+        ]
+        
+        for stat in stats:
+            stat_card = MDCard(
+                md_bg_color=(0.95, 0.95, 0.95, 1),
+                elevation=2,
+                padding="8dp"
+            )
+            
+            stat_layout = MDBoxLayout(orientation='vertical', spacing="4dp")
+            
+            icon_label = MDLabel(
+                text=stat["icon"],
+                font_size="24sp",
+                halign="center",
+                size_hint_y=None,
+                height="30dp"
+            )
+            
+            number_label = MDLabel(
+                text=stat["number"],
+                font_style="H4",
+                theme_text_color="Primary",
+                halign="center",
+                size_hint_y=None,
+                height="40dp",
+                bold=True
+            )
+            
+            desc_label = MDLabel(
+                text=stat["label"],
+                font_style="Caption",
+                theme_text_color="Secondary",
+                halign="center",
+                size_hint_y=None,
+                height="40dp"
+            )
+            
+            stat_layout.add_widget(icon_label)
+            stat_layout.add_widget(number_label)
+            stat_layout.add_widget(desc_label)
+            stat_card.add_widget(stat_layout)
+            stats_grid.add_widget(stat_card)
+        
+        layout.add_widget(stats_grid)
+        card.add_widget(layout)
+        
+        return card
+    
+    def create_recent_activity_card(self) -> MDCard:
+        """Create recent activity card with timeline"""
+        card = MDCard(
+            size_hint_y=None,
+            height="250dp",
+            elevation=4,
+            padding="20dp"
+        )
+        
+        layout = MDBoxLayout(orientation='vertical', spacing="12dp")
+        
+        # Title
+        title = MDLabel(
+            text="Recent Activity",
+            font_style="H6",
+            theme_text_color="Primary",
+            size_hint_y=None,
+            height="30dp"
+        )
+        layout.add_widget(title)
+        
+        # Activity list
+        activity_scroll = ScrollView(size_hint_y=None, height="200dp")
+        activity_list = MDList()
+        
+        # Sample activities
+        activities = [
+            {"primary": "Took Aspirin", "secondary": "2 hours ago"},
+            {"primary": "Added Blood Test Report", "secondary": "Yesterday"},
+            {"primary": "Completed Cardiology Appointment", "secondary": "3 days ago"},
+        ]
+        
+        for activity in activities:
+            item = TwoLineListItem(
+                text=activity["primary"],
+                secondary_text=activity["secondary"]
+            )
+            activity_list.add_widget(item)
+        
+        activity_scroll.add_widget(activity_list)
+        layout.add_widget(activity_scroll)
+        card.add_widget(layout)
+        
+        return card
