@@ -151,10 +151,14 @@ class BaseScreen(Screen):
             ]
             
             for i, (title, screen_name) in enumerate(menu_items):
+                # Create transparent version of color
+                base_color = colors[i % len(colors)]
+                transparent_color = (base_color[0], base_color[1], base_color[2], 0.15)
+                
                 item = MDCard(
                     size_hint_y=None,
                     height="48dp",
-                    md_bg_color=colors[i % len(colors)] + (0.15,),  # Light tint
+                    md_bg_color=transparent_color,  # Properly formatted transparent color
                     radius=[8],
                     elevation=2,
                     padding="12dp",
