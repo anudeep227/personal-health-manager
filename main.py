@@ -32,12 +32,12 @@ class HealthApp(MDApp):
         super().__init__(**kwargs)
         self.title = "💊 Personal Health Manager"
         
-        # Beautiful vibrant health app theme
-        self.theme_cls.theme_style = "Light"
-        self.theme_cls.primary_palette = "Teal"
-        self.theme_cls.primary_hue = "600"  # Deeper teal
-        self.theme_cls.accent_palette = "Amber"
-        self.theme_cls.accent_hue = "A400"  # Bright amber accent
+        # Modern machine/tech theme - dark with neon accents
+        self.theme_cls.theme_style = "Dark"
+        self.theme_cls.primary_palette = "BlueGrey"
+        self.theme_cls.primary_hue = "900"  # Very dark
+        self.theme_cls.accent_palette = "Cyan"
+        self.theme_cls.accent_hue = "A400"  # Bright cyan accent
         
         # Initialize services
         self.config = Config()

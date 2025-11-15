@@ -338,22 +338,22 @@ class HomeScreen(BaseScreen):
         # Stats grid with better spacing
         stats_grid = GridLayout(cols=3, spacing="16dp", size_hint_y=None, height="140dp")
         
-        # Enhanced health statistics with diverse vibrant colors
+        # Enhanced health statistics with modern machine colors
         stats = [
             {
                 "number": "3", 
                 "label": "Medications\nToday",
-                "color": HealthAppColors.PURPLE  # Purple
+                "color": HealthAppColors.NEON_PURPLE  # Neon purple
             },
             {
                 "number": "1", 
                 "label": "Upcoming\nAppt",
-                "color": HealthAppColors.CYAN  # Bright cyan
+                "color": HealthAppColors.CYAN_BLUE  # Bright cyan
             },
             {
                 "number": "12", 
                 "label": "Health\nRecords",
-                "color": HealthAppColors.DEEP_ORANGE  # Deep orange
+                "color": HealthAppColors.CYBER_ORANGE  # Cyber orange
             }
         ]
         
@@ -435,42 +435,42 @@ class HomeScreen(BaseScreen):
             padding="4dp"
         )
         
-        # Enhanced sample activities with diverse vibrant colors
+        # Enhanced sample activities with modern machine colors
         activities = [
             {
                 "icon": "MED",
                 "primary": "Took Aspirin 100mg",
                 "secondary": "2 hours ago",
                 "status": "completed",
-                "color": HealthAppColors.MEDICATION  # Purple
+                "color": HealthAppColors.NEON_PURPLE  # Neon purple
             },
             {
                 "icon": "RPT",
                 "primary": "Added Blood Test Report",
                 "secondary": "Yesterday",
                 "status": "completed", 
-                "color": HealthAppColors.CYAN  # Bright cyan
+                "color": HealthAppColors.ELECTRIC_BLUE  # Electric blue
             },
             {
                 "icon": "APT",
                 "primary": "Cardiology Appointment",
                 "secondary": "3 days ago",
                 "status": "completed",
-                "color": HealthAppColors.INDIGO  # Deep indigo
+                "color": HealthAppColors.CYAN_BLUE  # Bright cyan
             },
             {
                 "icon": "REC",
                 "primary": "Updated Health Records",
                 "secondary": "5 days ago", 
                 "status": "completed",
-                "color": HealthAppColors.LIME  # Bright lime
+                "color": HealthAppColors.MATRIX_GREEN  # Matrix green
             },
             {
                 "icon": "RMD",
                 "primary": "Set Medication Reminder",
                 "secondary": "1 week ago",
                 "status": "completed",
-                "color": HealthAppColors.AMBER  # Bright amber
+                "color": HealthAppColors.ELECTRIC_YELLOW  # Electric yellow
             }
         ]
         

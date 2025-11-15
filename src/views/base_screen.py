@@ -96,8 +96,8 @@ class BaseScreen(Screen):
         if not hasattr(self, 'nav_panel'):
             self.nav_panel = MDCard(
                 size_hint=(None, 1),
-                width="0dp",  # Start hidden
-                md_bg_color=(0.98, 0.98, 0.98, 1),
+                width=0,  # Start hidden - use numeric value for animation
+                md_bg_color=(0.12, 0.12, 0.12, 0.95),  # Modern dark background
                 elevation=16,
                 radius=[0, 16, 16, 0],
                 pos_hint={'x': 0, 'y': 0}
@@ -110,21 +110,21 @@ class BaseScreen(Screen):
                 padding="16dp"
             )
             
-            # Header
+            # Header with modern gradient
             header = MDCard(
                 size_hint_y=None,
                 height="100dp",
-                md_bg_color=HealthAppColors.TEAL,
+                md_bg_color=(0.1, 0.1, 0.1, 1),  # Modern dark header
                 elevation=0,
                 padding="16dp",
                 radius=[8]
             )
             
             header_label = MDLabel(
-                text="Health Manager\\nNavigation",
+                text="Health Manager\nNavigation",
                 font_style="H6",
                 theme_text_color="Custom",
-                text_color=(1, 1, 1, 1),
+                text_color=(0.9, 0.9, 0.9, 1),  # Light text on dark
                 bold=True,
                 halign="left"
             )
@@ -139,21 +139,21 @@ class BaseScreen(Screen):
                 adaptive_height=True
             )
             
-            # Colorful menu items
+            # Modern machine/tech colors - dark theme with neon accents
             colors = [
-                HealthAppColors.LIME,      # Home
-                HealthAppColors.PURPLE,    # Profile  
-                HealthAppColors.AMBER,     # Medications
-                HealthAppColors.CYAN,      # Reports
-                HealthAppColors.INDIGO,    # Appointments
-                HealthAppColors.DEEP_ORANGE, # Health Records
-                HealthAppColors.PINK       # Settings
+                (0.0, 0.8, 0.4, 1),      # Matrix green - Home
+                (0.2, 0.6, 1.0, 1),      # Electric blue - Profile  
+                (0.8, 0.2, 1.0, 1),      # Neon purple - Medications
+                (1.0, 0.3, 0.0, 1),      # Cyber orange - Reports
+                (0.0, 1.0, 1.0, 1),      # Cyan blue - Appointments
+                (1.0, 0.0, 0.5, 1),      # Hot pink - Health Records
+                (0.7, 0.7, 0.0, 1)       # Electric yellow - Settings
             ]
             
             for i, (title, screen_name) in enumerate(menu_items):
-                # Create transparent version of color
+                # Create transparent version of color for dark theme
                 base_color = colors[i % len(colors)]
-                transparent_color = (base_color[0], base_color[1], base_color[2], 0.15)
+                transparent_color = (base_color[0], base_color[1], base_color[2], 0.25)  # Slightly more visible on dark
                 
                 item = MDCard(
                     size_hint_y=None,
@@ -183,7 +183,8 @@ class BaseScreen(Screen):
                 title_label = MDLabel(
                     text=title,
                     font_style="Subtitle1",
-                    theme_text_color="Primary",
+                    theme_text_color="Custom",
+                    text_color=(0.9, 0.9, 0.9, 1),  # Light text for dark theme
                     valign="center"
                 )
                 
@@ -199,20 +200,21 @@ class BaseScreen(Screen):
             # Add to main layout
             self.main_layout.add_widget(self.nav_panel)
         
-        # Animate slide in
+        # Animate slide in/out with numeric values
+        from kivy.metrics import dp
         if self.nav_panel.width == 0:
-            anim = Animation(width="280dp", duration=0.3, t="out_quart")
+            anim = Animation(width=dp(280), duration=0.3, t="out_quart")
             anim.start(self.nav_panel)
         else:
             # Slide out
-            anim = Animation(width="0dp", duration=0.3, t="out_quart")
+            anim = Animation(width=0, duration=0.3, t="out_quart")
             anim.start(self.nav_panel)
     
     def _slide_navigate(self, screen_name):
         """Navigate and close sliding menu"""
         # Close menu first
         if hasattr(self, 'nav_panel'):
-            anim = Animation(width="0dp", duration=0.3, t="out_quart")
+            anim = Animation(width=0, duration=0.3, t="out_quart")
             anim.start(self.nav_panel)
         
         # Navigate
