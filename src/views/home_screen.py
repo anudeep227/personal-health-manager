@@ -63,41 +63,6 @@ class HomeScreen(BaseScreen):
         scroll.add_widget(main_layout)
         self.content_layout.add_widget(scroll)
         
-        # Recent activity
-        activity_card = self.create_card("Recent Activity")
-        self.activity_list = MDList()
-        activity_card.add_widget(self.activity_list)
-        self.content_layout.add_widget(activity_card)
-        
-        # Quick actions
-        actions_layout = BoxLayout(orientation='horizontal', spacing=10, size_hint_y=None, height="60dp")
-        
-        add_med_btn = MDRaisedButton(
-            text="Add Medication",
-            on_release=lambda x: self.navigate_to_screen('medications')
-        )
-        actions_layout.add_widget(add_med_btn)
-        
-        add_report_btn = MDRaisedButton(
-            text="Add Report",
-            on_release=lambda x: self.navigate_to_screen('reports')
-        )
-        actions_layout.add_widget(add_report_btn)
-        
-        analyze_doc_btn = MDRaisedButton(
-            text="Analyze Document",
-            on_release=lambda x: self.navigate_to_screen('document_analysis')
-        )
-        actions_layout.add_widget(analyze_doc_btn)
-        
-        schedule_appt_btn = MDRaisedButton(
-            text="Schedule Appointment",
-            on_release=lambda x: self.navigate_to_screen('appointments')
-        )
-        actions_layout.add_widget(schedule_appt_btn)
-        
-        self.content_layout.add_widget(actions_layout)
-        
         # Load initial data
         self.refresh_data()
     
@@ -157,8 +122,7 @@ class HomeScreen(BaseScreen):
             # Update appointment stats
             self.update_appointment_stats()
             
-            # Update recent activity
-            self.update_recent_activity()
+            # Recent activity is now handled by the card-based display
             
         except Exception as e:
             self.show_error(f"Failed to refresh data: {str(e)}")
@@ -374,22 +338,19 @@ class HomeScreen(BaseScreen):
         # Stats grid with better spacing
         stats_grid = GridLayout(cols=3, spacing="16dp", size_hint_y=None, height="140dp")
         
-        # Enhanced health statistics with colors
+        # Enhanced health statistics with colors (no icons to avoid display issues)
         stats = [
             {
-                "icon": "[MED]", 
                 "number": "3", 
                 "label": "Medications\nToday",
                 "color": HealthAppColors.MEDICATION
             },
             {
-                "icon": "[CAL]", 
                 "number": "1", 
                 "label": "Upcoming\nAppt",
                 "color": HealthAppColors.APPOINTMENT
             },
             {
-                "icon": "[CHT]", 
                 "number": "12", 
                 "label": "Health\nRecords",
                 "color": HealthAppColors.VITAL_SIGNS
@@ -403,40 +364,33 @@ class HomeScreen(BaseScreen):
                 padding="8dp"
             )
             
-            stat_layout = MDBoxLayout(orientation='vertical', spacing="4dp")
+            stat_layout = MDBoxLayout(orientation='vertical', spacing="8dp", padding="12dp")
             
-            icon_label = MDLabel(
-                text=stat["icon"],
-                font_size="24sp",
-                halign="center",
-                size_hint_y=None,
-                height="30dp"
-            )
-            
+            # Just show the number prominently without problematic icons
             number_label = MDLabel(
                 text=stat["number"],
-                font_style="H4",
+                font_style="H3",  # Larger, more prominent
                 theme_text_color="Custom",
-                text_color=stat["color"],  # Use the enhanced colors
+                text_color=stat["color"],
                 halign="center",
                 size_hint_y=None,
-                height="40dp",
+                height="50dp",
                 bold=True
             )
             
+            # Description with better text handling
             desc_label = MDLabel(
                 text=stat["label"],
-                font_style="Caption",
-                theme_text_color="Secondary",
+                font_style="Body2",
+                theme_text_color="Primary",  # Make it more prominent
                 halign="center",
                 size_hint_y=None,
-                height="40dp",
-                text_size=("80dp", None),  # Enable text wrapping for small cards
+                height="50dp",
+                text_size=("100dp", None),  # Better width for text wrapping
                 valign="middle"
             )
             desc_label.bind(texture_size=desc_label.setter('size'))
             
-            stat_layout.add_widget(icon_label)
             stat_layout.add_widget(number_label)
             stat_layout.add_widget(desc_label)
             stat_card.add_widget(stat_layout)
@@ -453,7 +407,7 @@ class HomeScreen(BaseScreen):
         
         card = MDCard(
             size_hint_y=None,
-            height="300dp",  # Increased height to prevent overflow
+            height="280dp",  # Reduced height to fit better on screen
             elevation=4,
             padding="16dp",
             md_bg_color=HealthAppColors.CARD_GRADIENT_1
@@ -473,7 +427,7 @@ class HomeScreen(BaseScreen):
         layout.add_widget(title)
         
         # Activity list with proper scrolling
-        activity_scroll = ScrollView(size_hint_y=None, height="240dp")
+        activity_scroll = ScrollView(size_hint_y=None, height="220dp")  # Reduced to fit within card
         activity_container = MDBoxLayout(
             orientation='vertical',
             spacing="8dp",
@@ -481,38 +435,38 @@ class HomeScreen(BaseScreen):
             padding="4dp"
         )
         
-        # Enhanced sample activities with colors and icons
+        # Enhanced sample activities with colors
         activities = [
             {
-                "icon": "[MED]",
+                "icon": "MED",
                 "primary": "Took Aspirin 100mg",
                 "secondary": "2 hours ago",
                 "status": "completed",
                 "color": HealthAppColors.COMPLETED
             },
             {
-                "icon": "[RPT]",
+                "icon": "RPT",
                 "primary": "Added Blood Test Report",
                 "secondary": "Yesterday",
                 "status": "completed", 
                 "color": HealthAppColors.REPORT
             },
             {
-                "icon": "[APT]",
+                "icon": "APT",
                 "primary": "Cardiology Appointment",
                 "secondary": "3 days ago",
                 "status": "completed",
                 "color": HealthAppColors.APPOINTMENT
             },
             {
-                "icon": "[REC]",
+                "icon": "REC",
                 "primary": "Updated Health Records",
                 "secondary": "5 days ago", 
                 "status": "completed",
                 "color": HealthAppColors.VITAL_SIGNS
             },
             {
-                "icon": "[RMD]",
+                "icon": "RMD",
                 "primary": "Set Medication Reminder",
                 "secondary": "1 week ago",
                 "status": "completed",
@@ -537,14 +491,16 @@ class HomeScreen(BaseScreen):
                 height="36dp"
             )
             
-            # Status icon with color
+            # Status indicator with just color circle
             icon_label = MDLabel(
-                text=activity["icon"],
-                font_size="20sp",
+                text="●",  # Simple bullet point
+                font_size="12sp",
                 size_hint_x=None,
-                width="30dp",
+                width="20dp",
                 halign="center",
-                valign="center"
+                valign="center",
+                theme_text_color="Custom",
+                text_color=activity["color"]
             )
             
             # Activity text content
@@ -575,14 +531,14 @@ class HomeScreen(BaseScreen):
             text_layout.add_widget(primary_label)
             text_layout.add_widget(secondary_label)
             
-            # Status indicator
+            # Status indicator with simple text
             status_indicator = MDLabel(
-                text="✓",
+                text="OK",  # Simple text instead of Unicode
                 theme_text_color="Custom",
                 text_color=activity["color"],
-                font_size="16sp",
+                font_size="10sp",
                 size_hint_x=None,
-                width="20dp",
+                width="25dp",
                 halign="center",
                 valign="center",
                 bold=True
