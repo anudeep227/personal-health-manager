@@ -44,7 +44,10 @@ class HomeScreen(BaseScreen):
             padding=["16dp", "8dp", "16dp", "16dp"]
         )
         
-        # Welcome Hero Card
+        # Set dark background for main layout
+        main_layout.md_bg_color = (0.05, 0.05, 0.05, 1)  # Very dark background
+        
+        # Hero Welcome Card
         hero_card = self.create_hero_welcome_card()
         main_layout.add_widget(hero_card)
         
@@ -213,14 +216,16 @@ class HomeScreen(BaseScreen):
     
     def create_hero_welcome_card(self) -> MDCard:
         """Create beautiful hero welcome card"""
+        from src.utils.theme import HealthAppColors
         app = MDApp.get_running_app()
         
         card = MDCard(
-            md_bg_color=app.theme_cls.primary_color,
+            md_bg_color=HealthAppColors.MATRIX_GREEN,  # Use modern matrix green
             size_hint_y=None,
             height="140dp",
             elevation=8,
-            padding="24dp"
+            padding="24dp",
+            radius=[15]
         )
         
         layout = MDBoxLayout(orientation='vertical', spacing="8dp")
@@ -319,7 +324,8 @@ class HomeScreen(BaseScreen):
             height="200dp",  # Increased height for better spacing
             elevation=6,
             padding="20dp",
-            md_bg_color=HealthAppColors.CARD_GRADIENT_3
+            md_bg_color=(0.15, 0.15, 0.15, 1),  # Dark card background
+            radius=[15]
         )
         
         layout = MDBoxLayout(orientation='vertical', spacing="16dp")
@@ -359,9 +365,10 @@ class HomeScreen(BaseScreen):
         
         for stat in stats:
             stat_card = MDCard(
-                md_bg_color=(0.95, 0.95, 0.95, 1),
-                elevation=2,
-                padding="8dp"
+                md_bg_color=(0.2, 0.2, 0.2, 1),  # Dark stat card background
+                elevation=4,
+                padding="12dp",
+                radius=[10]
             )
             
             stat_layout = MDBoxLayout(orientation='vertical', spacing="8dp", padding="12dp")
@@ -410,7 +417,8 @@ class HomeScreen(BaseScreen):
             height="280dp",  # Reduced height to fit better on screen
             elevation=4,
             padding="16dp",
-            md_bg_color=HealthAppColors.CARD_GRADIENT_1
+            md_bg_color=(0.15, 0.15, 0.15, 1),  # Dark card background
+            radius=[15]
         )
         
         layout = MDBoxLayout(orientation='vertical', spacing="12dp")

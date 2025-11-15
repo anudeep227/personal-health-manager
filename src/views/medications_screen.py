@@ -391,13 +391,13 @@ class MedicationsScreen(BaseScreen):
     
     def show_medication_dialog(self, medication=None):
         """Show medication add/edit dialog with proper sizing"""
-        # Create form layout with proper sizing
+        # Create form layout with proper sizing to prevent overflow
         form_layout = MDBoxLayout(
             orientation='vertical', 
-            spacing="16dp",
+            spacing="20dp",
             size_hint_y=None,
-            height="400dp",  # Increased height to prevent overflow
-            padding="20dp"
+            height="500dp",  # Further increased height
+            padding="24dp"
         )
         
         # Medication name
@@ -513,13 +513,13 @@ class MedicationsScreen(BaseScreen):
             except Exception as e:
                 self.show_error(f"Failed to save medication: {str(e)}")
         
-        # Create dialog with proper sizing
+        # Create dialog with proper sizing to prevent text overflow
         dialog = MDDialog(
             title="Add Medication" if not medication else "Edit Medication",
             type="custom",
             content_cls=form_layout,
-            size_hint=(0.9, None),  # 90% width, auto height
-            height="450dp",  # Fixed height to prevent overflow
+            size_hint=(0.95, None),  # Wider dialog
+            height="550dp",  # Increased height to prevent overflow
             buttons=[
                 MDFlatButton(
                     text="CANCEL",

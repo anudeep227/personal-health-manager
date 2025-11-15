@@ -34,7 +34,7 @@ class HealthApp(MDApp):
         
         # Modern machine/tech theme - dark with neon accents
         self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "BlueGrey"
+        self.theme_cls.primary_palette = "BlueGray"  # Correct palette name
         self.theme_cls.primary_hue = "900"  # Very dark
         self.theme_cls.accent_palette = "Cyan"
         self.theme_cls.accent_hue = "A400"  # Bright cyan accent

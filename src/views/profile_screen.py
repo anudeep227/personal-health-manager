@@ -25,9 +25,10 @@ class ProfileScreen(BaseScreen):
         ]
     
     def setup_content(self):
-        """Setup profile screen content"""
+        """Setup profile screen content with single block design"""
         from kivymd.uix.boxlayout import MDBoxLayout
         from kivymd.uix.scrollview import MDScrollView
+        from kivymd.uix.card import MDCard
         
         # Create scroll view for better layout
         scroll = MDScrollView()
@@ -38,13 +39,21 @@ class ProfileScreen(BaseScreen):
             padding="20dp"
         )
         
-        # Profile header card
-        header_card = self.create_profile_header()
-        main_layout.add_widget(header_card)
+        # Single comprehensive profile card
+        profile_card = MDCard(
+            size_hint_y=None,
+            height="600dp",
+            elevation=8,
+            padding="24dp",
+            md_bg_color=(0.15, 0.15, 0.15, 1),  # Dark background
+            radius=[15]
+        )
         
-        # Profile form
-        form_card = self.create_card("Personal Information")
-        form_layout = MDBoxLayout(orientation='vertical', spacing="16dp", padding="20dp")
+        form_layout = MDBoxLayout(orientation='vertical', spacing="20dp")
+        
+        # Profile header within the card
+        header_layout = self.create_compact_profile_header()
+        form_layout.add_widget(header_layout)
         
         # Name fields
         self.first_name_field = MDTextField(
@@ -91,11 +100,7 @@ class ProfileScreen(BaseScreen):
         )
         form_layout.add_widget(save_btn)
         
-        form_card.add_widget(form_layout)
-        main_layout.add_widget(form_card)
-        
-        scroll.add_widget(main_layout)
-        self.content_layout.add_widget(scroll)
+        # Add all form fields to the single card\n        profile_card.add_widget(form_layout)\n        main_layout.add_widget(profile_card)\n        \n        scroll.add_widget(main_layout)\n        self.content_layout.add_widget(scroll)
         
         # Load existing profile data
         self.load_profile_data()
@@ -151,6 +156,61 @@ class ProfileScreen(BaseScreen):
         
         card.add_widget(layout)
         return card
+    
+    def create_compact_profile_header(self):
+        """Create compact profile header for single block design"""
+        from src.utils.theme import HealthAppColors
+        from kivymd.uix.boxlayout import MDBoxLayout
+        
+        header_layout = MDBoxLayout(
+            orientation='horizontal',
+            size_hint_y=None,
+            height="80dp",
+            spacing="16dp",
+            padding="12dp"
+        )
+        
+        # Avatar
+        avatar_card = MDCard(
+            size_hint=(None, None),
+            size=("60dp", "60dp"),
+            md_bg_color=HealthAppColors.ELECTRIC_BLUE,
+            radius=[30],
+            elevation=4
+        )
+        
+        avatar_label = MDLabel(
+            text="JP",
+            font_style="H6",
+            halign="center",
+            valign="center",
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1),
+            bold=True
+        )
+        avatar_card.add_widget(avatar_label)
+        header_layout.add_widget(avatar_card)
+        
+        # Welcome text
+        text_layout = MDBoxLayout(orientation='vertical', spacing="4dp")
+        welcome_label = MDLabel(
+            text="Personal Profile",
+            font_style="H6",
+            theme_text_color="Custom",
+            text_color=(0.9, 0.9, 0.9, 1),
+            bold=True
+        )
+        subtitle_label = MDLabel(
+            text="Manage your health information",
+            font_style="Body2",
+            theme_text_color="Custom",
+            text_color=(0.7, 0.7, 0.7, 1)
+        )
+        text_layout.add_widget(welcome_label)
+        text_layout.add_widget(subtitle_label)
+        header_layout.add_widget(text_layout)
+        
+        return header_layout
     
     def load_profile_data(self):
         """Load existing profile data"""

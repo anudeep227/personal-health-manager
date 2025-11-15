@@ -92,15 +92,15 @@ class BaseScreen(Screen):
         from kivy.animation import Animation
         from src.utils.theme import HealthAppColors
         
-        # Create sliding menu panel
+        # Create full-screen sliding navigation drawer
         if not hasattr(self, 'nav_panel'):
             self.nav_panel = MDCard(
                 size_hint=(None, 1),
                 width=0,  # Start hidden - use numeric value for animation
-                md_bg_color=(0.12, 0.12, 0.12, 0.95),  # Modern dark background
-                elevation=16,
-                radius=[0, 16, 16, 0],
-                pos_hint={'x': 0, 'y': 0}
+                md_bg_color=(0.1, 0.1, 0.1, 0.95),  # Darker background
+                elevation=20,
+                radius=[0, 0, 0, 0],  # No radius for full screen effect
+                pos_hint={'x': 0, 'top': 1}  # Position from top-left
             )
             
             # Panel content
@@ -212,6 +212,8 @@ class BaseScreen(Screen):
     
     def _slide_navigate(self, screen_name):
         """Navigate and close sliding menu"""
+        from kivy.animation import Animation
+        
         # Close menu first
         if hasattr(self, 'nav_panel'):
             anim = Animation(width=0, duration=0.3, t="out_quart")
